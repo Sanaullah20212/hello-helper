@@ -46,9 +46,9 @@ const SearchPage = () => {
       <PageTracker />
       
       <SEOHead
-        title={query ? `Search: ${query} - Bengali TV Serials | BengaliTVSerial24` : "Search Bengali TV Serials & Episodes | BengaliTVSerial24"}
-        description={query ? `Search results for "${query}" on BengaliTVSerial24. Find Bengali TV serials, episodes & more.` : "Search and find your favorite Bengali TV serials, episodes, and movies on BengaliTVSerial24."}
-        canonical={`https://www.bengalitvserial24.com/search${query ? `?q=${encodeURIComponent(query)}` : ''}`}
+        title={query ? `Search: ${query} - Bengali TV Serials | BTSPRO24` : "Search Bengali TV Serials & Episodes | BTSPRO24"}
+        description={query ? `Search results for "${query}" on BTSPRO24. Find Bengali TV serials, episodes & more.` : "Search and find your favorite Bengali TV serials, episodes, and movies on BTSPRO24."}
+        canonical={`https://www.btspro24.com/search${query ? `?q=${encodeURIComponent(query)}` : ''}`}
         keywords={`search bengali serial,${query || 'bengali tv serial'},find bengali shows,bengali serial search`}
       />
       

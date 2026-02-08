@@ -41,11 +41,11 @@ const Header = () => {
             {logoUrl ? (
               <img 
                 src={logoUrl} 
-                alt="Bengalitvserial24" 
+                alt="BTSPRO24" 
                 className="h-8 md:h-9 w-auto"
               />
             ) : (
-              <span className="text-lg font-bold text-white">Bengalitvserial24</span>
+              <span className="text-lg font-bold text-white">BTSPRO24</span>
             )}
           </Link>
 

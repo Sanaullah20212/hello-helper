@@ -157,10 +157,10 @@ const ShowPage = () => {
   }
 
   // SEO optimized title & description (ZEE5 style)
-  const seoTitle = `${show.title} TV Serial Online - Watch Latest Show Episodes & Download HD | BengaliTVSerial24`;
-  const seoDescription = `Watch ${show.title} Latest Episodes Online in full HD on BengaliTVSerial24. Enjoy ${show.title} best trending moments, video clips, promos & more. ${show.description ? show.description.substring(0, 100) : `Download ${show.title} all episodes free.`}`;
-  const seoCanonical = `https://www.bengalitvserial24.com/show/${slug}`;
-  const seoImage = show.poster_url || show.thumbnail_url || "https://www.bengalitvserial24.com/og-image.png";
+  const seoTitle = `${show.title} TV Serial Online - Watch Latest Show Episodes & Download HD | BTSPRO24`;
+  const seoDescription = `Watch ${show.title} Latest Episodes Online in full HD on BTSPRO24. Enjoy ${show.title} best trending moments, video clips, promos & more. ${show.description ? show.description.substring(0, 100) : `Download ${show.title} all episodes free.`}`;
+  const seoCanonical = `https://www.btspro24.com/show/${slug}`;
+  const seoImage = show.poster_url || show.thumbnail_url || "https://www.btspro24.com/og-image.png";
 
   // JSON-LD for show page
   const showJsonLd = {

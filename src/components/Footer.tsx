@@ -15,9 +15,9 @@ const Footer = () => {
           {/* Logo */}
           <Link to="/" className="h-8 flex items-center">
             {logoUrl ? (
-              <img src={logoUrl} alt="Bengalitvserial24" className="h-8 w-auto" />
+              <img src={logoUrl} alt="BTSPRO24" className="h-8 w-auto" />
             ) : (
-              <span className="text-lg font-bold text-white">Bengalitvserial24</span>
+              <span className="text-lg font-bold text-white">BTSPRO24</span>
             )}
           </Link>
           
@@ -32,7 +32,7 @@ const Footer = () => {
       <div className="border-t border-border/50">
         <div className="page-container py-4">
           <p className="text-muted-foreground text-sm text-center flex items-center justify-center gap-1">
-            © {currentYear} Bengalitvserial24. Made with 
+            © {currentYear} BTSPRO24. Made with 
             <Heart className="w-4 h-4 text-destructive fill-destructive" /> 
             All Rights Reserved.
           </p>

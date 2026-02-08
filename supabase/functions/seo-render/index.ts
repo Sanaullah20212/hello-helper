@@ -84,9 +84,9 @@ serve(async (req) => {
       .eq("id", "main")
       .single();
 
-    const siteTitle = settings?.site_title || "BengaliTVSerial24";
-    const siteDescription = settings?.site_description || "বাংলা টিভি সিরিয়াল ডাউনলোড";
-    const siteUrl = "https://www.bengalitvserial24.com";
+    const siteTitle = settings?.site_title || "BTSPRO24";
+    const siteDescription = settings?.site_description || "বাংলা মুভি, সিরিয়াল এবং টিভি শো ডাউনলোড করার জন্য সেরা ওয়েবসাইট।";
+    const siteUrl = "https://www.btspro24.com";
 
     let title = siteTitle;
     let description = siteDescription;

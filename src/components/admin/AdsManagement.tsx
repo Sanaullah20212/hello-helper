@@ -21,9 +21,9 @@ const AdsManagement = () => {
     ad_code_in_article: "",
     google_adsense_id: "",
     google_analytics_id: "",
-    site_title: "Bengalitvserial24",
-    site_description: "The best website to download Bengali serials and TV shows.",
-    site_keywords: "Bengalitvserial,Bengalitvserial24,bengalitvserial24.com,bengali tv serial download",
+    site_title: "BTSPRO24",
+    site_description: "বাংলা মুভি, সিরিয়াল এবং টিভি শো ডাউনলোড করার জন্য সেরা ওয়েবসাইট।",
+    site_keywords: "BTSPRO24,btspro24.com,bengali tv serial download,bangla movie download",
   });
 
   useEffect(() => {

@@ -87,9 +87,9 @@ const SectionPage = () => {
       <PageTracker />
       
       <SEOHead
-        title={`${sectionName} - Watch Popular Bengali TV Serials Online HD | BengaliTVSerial24`}
-        description={`Browse all shows in ${sectionName} section. Watch and download popular Bengali TV serials in HD quality on BengaliTVSerial24.`}
-        canonical={`https://www.bengalitvserial24.com/section/${slug}`}
+        title={`${sectionName} - Watch Popular Bengali TV Serials Online HD | BTSPRO24`}
+        description={`Browse all shows in ${sectionName} section. Watch and download popular Bengali TV serials in HD quality on BTSPRO24.`}
+        canonical={`https://www.btspro24.com/section/${slug}`}
         keywords={`${sectionName},bengali tv serial,${sectionName} shows,watch bengali serial online`}
       />
 

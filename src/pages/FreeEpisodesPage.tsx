@@ -17,10 +17,10 @@ const FreeEpisodesPage = () => {
       <PageTracker />
       
       <SEOHead
-        title="Free Bengali TV Serial Episodes - Watch & Download Latest Episodes HD | BengaliTVSerial24"
-        description="Watch and download the latest free Bengali TV serial episodes in full HD quality. Star Jalsha, Zee Bangla, Colors Bangla, Sun Bangla serials available free on BengaliTVSerial24."
+        title="Free Bengali TV Serial Episodes - Watch & Download Latest Episodes HD | BTSPRO24"
+        description="Watch and download the latest free Bengali TV serial episodes in full HD quality. Star Jalsha, Zee Bangla, Colors Bangla, Sun Bangla serials available free on BTSPRO24."
         keywords="free bengali serial episodes,free download bengali serial,star jalsha free episodes,zee bangla free episodes,bengali tv serial download free"
-        canonical="https://www.bengalitvserial24.com/free-episodes"
+        canonical="https://www.btspro24.com/free-episodes"
       />
       
       <Header />

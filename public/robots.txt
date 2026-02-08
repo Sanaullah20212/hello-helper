@@ -1,4 +1,4 @@
-# BengaliTVSerial24 Robots.txt
+# BTSPRO24 Robots.txt
 # Last updated: 2026-01-26
 
 # Main search engine crawlers - allow everything
@@ -44,4 +44,4 @@ Disallow: /admin/*
 Crawl-delay: 3
 
 # Sitemap Index (like Rank Math)
-Sitemap: https://www.bengalitvserial24.com/sitemap_index.xml
+Sitemap: https://www.btspro24.com/sitemap_index.xml

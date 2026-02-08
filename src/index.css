@@ -157,7 +157,7 @@
     @apply border-2 border-dashed border-border mt-4 w-full rounded-lg p-4 text-center;
   }
 
-  /* Post Section Title - Red Box (matches bengalitvserial24.com) */
+  /* Post Section Title - Red Box (matches btspro24.com) */
   .post-section-title {
     @apply flex items-center gap-2 rounded-md px-4 py-3 font-semibold text-white text-sm md:text-base;
     background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
@@ -178,7 +178,7 @@
     @apply text-center text-muted-foreground my-2 text-sm;
   }
 
-  /* Download Buttons - Matching bengalitvserial24.com style */
+  /* Download Buttons - Matching btspro24.com style */
   .Dbtn {
     @apply inline-flex items-center justify-center px-6 py-3 rounded-md font-semibold transition-all duration-300 text-sm min-w-[200px] text-center;
     background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
