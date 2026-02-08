@@ -7,7 +7,7 @@ export const useLatestPosts = (limit = 6) => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("posts")
-        .select("id, title, slug, excerpt, featured_image_url, created_at, view_count, tags, category_id")
+        .select("id, title, slug, excerpt, featured_image_url, content, created_at, view_count, tags, category_id")
         .eq("status", "published")
         .order("created_at", { ascending: false })
         .limit(limit);
