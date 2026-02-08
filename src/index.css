@@ -136,6 +136,14 @@
     @apply bg-primary text-primary-foreground border-primary;
   }
 
+  /* Category pill badges for homepage */
+  .category-badge-pill {
+    @apply inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium
+           bg-secondary/70 text-muted-foreground border border-border/40
+           hover:bg-primary/15 hover:text-primary hover:border-primary/50
+           transition-all duration-200 cursor-pointer;
+  }
+
   /* Movie card */
   .movie-card {
     @apply relative overflow-hidden rounded-xl bg-card border border-border/30
