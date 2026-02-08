@@ -152,60 +152,132 @@
     background: var(--gradient-card);
   }
 
-  /* SDC Download Container - Dark card with border */
+  /* SDC Download Container */
   .SDC {
     @apply border border-border/50 mt-6 w-full rounded-xl p-5 text-center;
     background: hsl(var(--background));
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
   }
 
-  /* Post Section Title - Centered pill badge with ⚡ icons */
-  .post-section-title {
+  /* ============ Download Section - New WP Theme ============ */
+  .download-section {
+    margin-bottom: 1.5rem;
+    background: hsla(192, 45%, 10%, 0.5);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    border: 1px solid hsla(192, 25%, 18%, 0.3);
+  }
+
+  .download-header {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .download-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.5rem;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #dc2626 0%, #ea580c 100%);
+    color: white;
+    font-weight: 700;
+    font-size: 0.875rem;
+    box-shadow: 0 0 20px hsla(0, 72%, 51%, 0.3);
+    transition: all 0.3s;
+  }
+
+  .download-badge:hover {
+    transform: scale(1.02);
+  }
+
+  /* Quality-based badge colors */
+  .download-badge.badge-hd {
+    background: linear-gradient(135deg, #059669 0%, #14b8a6 100%);
+    box-shadow: 0 0 20px hsla(160, 84%, 39%, 0.3);
+  }
+
+  .download-badge.badge-medium {
+    background: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+    box-shadow: 0 0 20px hsla(217, 91%, 60%, 0.3);
+  }
+
+  .download-badge.badge-low {
+    background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+    box-shadow: 0 0 20px hsla(38, 92%, 50%, 0.3);
+  }
+
+  .download-badge svg,
+  .download-badge .zap-icon {
+    width: 1rem;
+    height: 1rem;
+    fill: #fde047;
+    color: #fde047;
+  }
+
+  .download-badge.badge-low svg,
+  .download-badge.badge-low .zap-icon {
+    fill: white;
+    color: white;
+  }
+
+  .download-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.625rem;
+  }
+
+  .download-link {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    padding: 0.65rem 2rem;
-    border-radius: 9999px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    letter-spacing: 0.02em;
-    background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
-    color: #fff;
-    border: none;
-    margin: 1.5rem auto 1rem;
-    width: fit-content;
-    max-width: 90%;
-    box-shadow: 0 4px 18px rgba(245, 158, 11, 0.35);
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 24rem;
+    padding: 0.75rem 1.25rem;
+    background: hsla(192, 50%, 6%, 0.8);
+    border: 1px solid hsla(192, 25%, 18%, 0.5);
+    border-radius: 0.75rem;
+    color: hsl(var(--foreground));
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+    text-decoration: none;
   }
 
-  .post-section-title::before,
-  .post-section-title::after {
-    content: "⚡";
-    font-size: 0.85em;
+  .download-link:hover {
+    border-color: hsla(172, 66%, 50%, 0.5);
+    background: hsla(172, 66%, 50%, 0.05);
+    color: hsl(var(--primary));
   }
 
-  .post-section-title svg {
-    display: none;
+  .download-link svg,
+  .download-link .dl-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: hsl(var(--primary));
+    flex-shrink: 0;
   }
 
-  /* Red variant for 240p / low quality */
-  .post-section-title.low,
-  .post-section-title.sd {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    box-shadow: 0 4px 18px rgba(239, 68, 68, 0.35);
+  .download-link:hover svg,
+  .download-link:hover .dl-icon {
+    animation: dl-bounce 0.5s;
   }
 
-  /* Episode Download Links - Dark card container */
+  @keyframes dl-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+
+  /* Legacy Dbtn support */
   .episode-download-links {
     @apply flex flex-col items-center gap-2.5;
-    background: hsl(var(--background));
-    border: 1px solid hsl(var(--border) / 0.5);
-    border-radius: 0.75rem;
-    padding: 1.25rem 1rem;
+    background: hsla(192, 45%, 10%, 0.5);
+    border: 1px solid hsla(192, 25%, 18%, 0.3);
+    border-radius: 1rem;
+    padding: 1.5rem;
     margin: 0.5rem 0 1.5rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   }
 
   .episode-separator {
@@ -214,67 +286,91 @@
     border-top: 1px dashed hsl(var(--border));
   }
 
-  /* Download Buttons - Dark style matching btspro24.com */
-  .Dbtn {
-    position: relative;
-    display: inline-flex;
+  /* Post single page - Dark theme */
+  .post-poster {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .post-poster img {
+    max-width: 28rem;
+    width: 100%;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid hsla(192, 25%, 18%, 0.3);
+  }
+
+  .post-synopsis {
+    background: hsla(192, 45%, 10%, 0.5);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    border: 1px solid hsla(192, 25%, 18%, 0.3);
+    margin-bottom: 2rem;
+  }
+
+  .synopsis-header {
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.6rem;
-    padding: 0.7rem 1.5rem;
-    border-radius: 0.5rem;
-    font-weight: 500;
+    gap: 0.5rem;
+    color: hsl(var(--primary));
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid hsla(192, 25%, 18%, 0.3);
+  }
+
+  .synopsis-content {
+    color: hsla(180, 15%, 95%, 0.85);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+  }
+
+  .synopsis-content p {
+    margin-bottom: 0.75rem;
+  }
+
+  .synopsis-content p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Screenshots */
+  .screenshots-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .screenshots-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: hsl(var(--muted-foreground));
     font-size: 0.875rem;
-    transition: all 0.25s ease;
-    text-decoration: none;
-    background: hsl(var(--card));
-    color: hsl(var(--foreground));
-    border: 1px solid hsl(var(--border));
-    min-width: 260px;
-    max-width: 380px;
-    width: 100%;
-    box-shadow: none;
+    font-weight: 500;
+    margin-bottom: 1rem;
   }
 
-  .Dbtn::before {
-    content: "";
-    display: inline-block;
-    width: 18px;
-    height: 18px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2340e0d0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'/%3E%3Cpolyline points='7 10 12 15 17 10'/%3E%3Cline x1='12' x2='12' y1='15' y2='3'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-size: contain;
-    flex-shrink: 0;
+  .screenshots-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
   }
 
-  .Dbtn:hover {
-    border-color: hsl(var(--primary));
-    background: hsl(var(--primary) / 0.1);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px hsl(var(--primary) / 0.15);
+  .screenshots-grid img {
+    max-width: 100%;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid hsla(192, 25%, 18%, 0.3);
   }
 
-  /* All Dbtn variants use same dark style now - only header pill color differs */
-  .Dbtn.hd,
-  .Dbtn.watch,
-  .Dbtn.hevc,
-  .Dbtn.sd,
-  .Dbtn.sub {
-    background: hsl(var(--card));
-    color: hsl(var(--foreground));
-    border: 1px solid hsl(var(--border));
-    box-shadow: none;
-  }
-
-  .Dbtn.hd:hover,
-  .Dbtn.watch:hover,
-  .Dbtn.hevc:hover,
-  .Dbtn.sd:hover,
-  .Dbtn.sub:hover {
-    border-color: hsl(var(--primary));
-    background: hsl(var(--primary) / 0.1);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px hsl(var(--primary) / 0.15);
+  /* Related Posts */
+  .related-posts {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid hsl(var(--border));
   }
 
   /* Section headers */
@@ -652,93 +748,7 @@
   border: none;
 }
 
-/* ---- Download section title (pill badge) ---- */
-.wordpress-preview .post-section-title {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.65rem 2rem;
-  border-radius: 9999px;
-  font-weight: 700;
-  font-size: 0.9rem;
-  background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
-  color: #fff;
-  margin: 1.5rem auto 0.75rem;
-  width: fit-content;
-  box-shadow: 0 4px 18px rgba(245, 158, 11, 0.35);
-}
-
-.wordpress-preview .post-section-title::before,
-.wordpress-preview .post-section-title::after {
-  content: "⚡";
-  font-size: 0.85em;
-}
-
-.wordpress-preview .post-section-title.low {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  box-shadow: 0 4px 18px rgba(239, 68, 68, 0.35);
-}
-
-/* Legacy p > span download headers */
-.wordpress-preview p span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.65rem 2rem;
-  border-radius: 9999px;
-  font-weight: 700;
-  font-size: 0.9rem;
-  background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
-  color: #fff;
-  margin: 1.5rem auto 0.75rem;
-  width: auto;
-  max-width: 380px;
-  box-shadow: 0 4px 18px rgba(245, 158, 11, 0.35);
-}
-
-/* ---- Download link buttons (h3 > a) ---- */
-.wordpress-preview h3 a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.7rem 1.5rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  font-size: 0.85rem;
-  text-decoration: none;
-  color: hsl(var(--foreground));
-  background: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
-  transition: all 0.25s ease;
-  min-width: 260px;
-  margin: 0.2rem 0;
-  position: relative;
-  overflow: hidden;
-}
-
-.wordpress-preview h3 a::before {
-  content: "";
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2340e0d0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'/%3E%3Cpolyline points='7 10 12 15 17 10'/%3E%3Cline x1='12' x2='12' y1='15' y2='3'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-size: contain;
-  flex-shrink: 0;
-}
-
-.wordpress-preview h3 a:hover {
-  border-color: hsl(var(--primary));
-  background: hsl(var(--primary) / 0.1);
-  color: hsl(var(--foreground));
-  transform: translateY(-1px);
-  box-shadow: 0 4px 15px hsl(var(--primary) / 0.15);
-}
-
-/* ---- Inline paragraph links (not in h3) ---- */
+/* ---- Inline paragraph links ---- */
 .wordpress-preview p a {
   color: hsl(var(--primary));
   text-decoration: underline;
@@ -765,143 +775,17 @@
 .wordpress-preview pre { background: hsl(var(--muted)); border-radius: 0.5rem; padding: 1rem; overflow-x: auto; text-align: left; }
 .wordpress-preview code { background: hsl(var(--muted)); padding: 0.15rem 0.4rem; border-radius: 0.25rem; font-family: monospace; }
 
-/* ============ Single Post - WP BengaliTVSerial24 Style ============ */
-.single-post-container {
-  padding-top: 1.5rem;
+/* ============ Single Post - Dark Theme ============ */
+.single-post {
+  padding: 2rem 0;
 }
 
-/* Post Article Card - White Background like WP theme */
-.post-article-card {
-  background: #fff;
-  border-radius: 0.5rem;
-  padding: 1.25rem 1rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-@media (min-width: 640px) {
-  .post-article-card {
-    padding: 1.5rem;
-  }
-}
-
-.post-article-title {
-  color: #1a1a1a;
-  line-height: 1.4;
-}
-
-/* Override wordpress-preview colors inside white card */
-.post-article-card .wordpress-preview {
-  color: #333;
-}
-
-.post-article-card .wordpress-preview p {
-  color: #333;
-}
-
-.post-article-card .wordpress-preview h2,
-.post-article-card .wordpress-preview h3 {
-  color: #1a1a1a;
-}
-
-/* Links inside white card should remain colored */
-.post-article-card .wordpress-preview p a {
-  color: #2196f3;
-}
-
-.post-article-card .wordpress-preview p a:hover {
-  color: #1976d2;
-}
-
-/* Images inside white card */
-.post-article-card .wordpress-preview img:not([src*="emoji"]) {
-  max-width: 420px;
-  width: 100%;
-  border-radius: 0.75rem;
-  margin: 1.5rem auto;
-  display: block;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  border: 2px solid #eee;
-}
-
-/* Post section titles inside white card */
-.post-article-card .post-section-title {
-  margin: 1.5rem -1rem 0.75rem;
-  border-radius: 0;
-}
-
-@media (min-width: 640px) {
-  .post-article-card .post-section-title {
-    margin: 1.5rem -1.5rem 0.75rem;
-  }
-}
-
-/* Download buttons inside white card */
-.post-article-card .episode-download-links {
-  padding: 1rem 0;
-}
-
-/* Separator inside white card */
-.post-article-card .episode-separator {
-  border-top-color: #eee;
-  margin: 0.75rem 0;
+/* Post meta */
+.post-meta-divider {
+  color: hsl(var(--border));
 }
 
 /* Widget Title Bar */
 .widget-title-bar {
   position: relative;
-}
-
-/* ============ Related Posts - WP White Card Style ============ */
-.related-post-card {
-  background: #fff;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s;
-  display: block;
-}
-
-.related-post-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-}
-
-.related-post-thumb {
-  aspect-ratio: 16/10;
-  overflow: hidden;
-}
-
-.related-post-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.related-post-info {
-  padding: 0.75rem;
-}
-
-.related-post-title {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #1a1a1a;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  line-height: 1.3;
-}
-
-.related-post-meta {
-  font-size: 0.75rem;
-  color: #999;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.related-post-meta svg {
-  width: 0.75rem;
-  height: 0.75rem;
 }

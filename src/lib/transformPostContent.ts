@@ -1,150 +1,262 @@
-import { Download, Play, Eye, Zap } from "lucide-react";
-import { renderToStaticMarkup } from "react-dom/server";
-
 /**
- * Transform raw WordPress post content into styled HTML
- * matching the btspro24 WordPress theme.
+ * Transform raw WordPress post content into structured sections
+ * matching the btspro24 WordPress theme (new version).
  *
- * Handles:
- * - Quality section markers (-HD Quality-, -Low Quality-, etc.)
- * - Download links → gradient Dbtn buttons
- * - Dbtn class links preservation
- * - Content cleanup (empty tags, centering)
+ * Returns: { poster, synopsis, screenshots, downloadSections, extraHtml }
  */
 
-const downloadIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg>`;
+const cloudDownloadIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dl-icon"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="M12 12v9"></path><path d="m8 17 4 4 4-4"></path></svg>`;
 
-/** Detect if a link is a download link */
-const isDownloadLink = (url: string, label: string): boolean => {
-  const urlLower = url.toLowerCase();
-  const labelLower = label.toLowerCase();
-  return (
-    urlLower.includes("download") ||
-    urlLower.includes("cloud") ||
-    urlLower.includes("xspeed") ||
-    urlLower.includes("gdrive") ||
-    urlLower.includes("urlpro") ||
-    urlLower.includes("terabox") ||
-    urlLower.includes("high") ||
-    labelLower.includes("download") ||
-    labelLower.includes("link") ||
-    labelLower.includes("speed") ||
-    labelLower.includes("quality") ||
-    labelLower.includes("ডাউনলোড") ||
-    labelLower.includes("লিংক")
-  );
-};
+const zapIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="zap-icon"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path></svg>`;
 
-/** Determine download button type from URL/label */
-const getButtonType = (url: string, label: string): string => {
-  const urlLower = url.toLowerCase();
-  const labelLower = label.toLowerCase();
+interface DownloadLink {
+  url: string;
+  label: string;
+}
 
-  if (urlLower.includes("watch") || labelLower.includes("watch") || labelLower.includes("online"))
-    return "watch";
-  if (urlLower.includes("hevc") || labelLower.includes("hevc"))
-    return "hevc";
-  if (urlLower.includes("/sd/") || labelLower.includes("sd quality") || labelLower.includes("low"))
-    return "sd";
-  if (urlLower.includes("sub") || labelLower.includes("sub"))
-    return "sub";
-  return "hd";
-};
+interface DownloadSection {
+  title: string;
+  badgeClass: string;
+  links: DownloadLink[];
+}
 
-/** Transform WordPress content to styled HTML */
+interface ParsedContent {
+  poster: string | null;
+  synopsis: string;
+  screenshots: string[];
+  downloadSections: DownloadSection[];
+  extraHtml: string;
+}
+
+/** Get all images from content (skip emojis) */
+function getContentImages(html: string): string[] {
+  const images: string[] = [];
+  const regex = /<img[^>]+src="([^"]+)"[^>]*>/gi;
+  let match;
+  while ((match = regex.exec(html)) !== null) {
+    const src = match[1];
+    if (!src.includes("emoji") && !src.includes("s.w.org") && !src.includes("icon")) {
+      images.push(src);
+    }
+  }
+  return images;
+}
+
+/** Extract download links from HTML fragment */
+function extractDownloadLinks(html: string): DownloadLink[] {
+  const links: DownloadLink[] = [];
+  const regex = /<a[^>]+href="([^"]+)"[^>]*>(.*?)<\/a>/gis;
+  let match;
+  while ((match = regex.exec(html)) !== null) {
+    const url = match[1];
+    const label = match[2].replace(/<[^>]*>/g, "").trim();
+    if (!label) continue;
+
+    const urlL = url.toLowerCase();
+    const labelL = label.toLowerCase();
+    if (
+      urlL.includes("download") || urlL.includes("cloud") ||
+      urlL.includes("xspeed") || urlL.includes("gdrive") ||
+      urlL.includes("urlpro") || urlL.includes("terabox") ||
+      urlL.includes("high") || urlL.includes("btspro24") ||
+      labelL.includes("download") || labelL.includes("link") ||
+      labelL.includes("speed") || labelL.includes("quality") ||
+      labelL.includes("ডাউনলোড") || labelL.includes("লিংক")
+    ) {
+      links.push({ url, label });
+    }
+  }
+  return links;
+}
+
+/** Get badge class based on section title */
+function getBadgeClass(title: string): string {
+  const lower = title.toLowerCase();
+  if (lower.includes("hd") || lower.includes("1080") || lower.includes("high")) return "badge-hd";
+  if (lower.includes("medium") || lower.includes("720")) return "badge-medium";
+  if (lower.includes("low") || lower.includes("480") || lower.includes("240") || lower.includes("convert")) return "badge-low";
+  return "";
+}
+
+/** Group links by URL quality patterns */
+function groupByUrlQuality(links: DownloadLink[]): DownloadSection[] {
+  const grouped: Record<string, DownloadLink[]> = { hd: [], medium: [], low: [] };
+
+  for (const link of links) {
+    const url = link.url.toLowerCase();
+    if (url.includes("/hd/") || url.includes("/hd%20") || url.includes("%2fhd")) {
+      grouped.hd.push(link);
+    } else if (url.includes("/medium/") || url.includes("/medium%20") || url.includes("%2fmedium")) {
+      grouped.medium.push(link);
+    } else if (url.includes("/low/") || url.includes("/low%20") || url.includes("%2flow")) {
+      grouped.low.push(link);
+    } else {
+      grouped.hd.push(link);
+    }
+  }
+
+  const sections: DownloadSection[] = [];
+  if (grouped.hd.length) sections.push({ title: "-HD Quality-", badgeClass: "badge-hd", links: grouped.hd });
+  if (grouped.medium.length) sections.push({ title: "-Medium Quality-", badgeClass: "badge-medium", links: grouped.medium });
+  if (grouped.low.length) sections.push({ title: "-Low Quality-", badgeClass: "badge-low", links: grouped.low });
+  return sections;
+}
+
+/** Extract quality-based sections from content */
+function extractQualitySections(content: string): DownloadSection[] {
+  const sections: DownloadSection[] = [];
+  const markers: { title: string; start: number; end: number }[] = [];
+
+  // Quality markers: -HD Quality-, -Low Quality-, etc.
+  const qualityRegex = /<p[^>]*>\s*-?\s*((?:HD|Low|Medium|High)\s*Quality)\s*-?\s*<\/p>/gi;
+  let m;
+  while ((m = qualityRegex.exec(content)) !== null) {
+    markers.push({
+      title: `-${m[1].trim()}-`,
+      start: m.index + m[0].length,
+      end: m.index,
+    });
+  }
+
+  // Standalone quality markers
+  if (!markers.length) {
+    const standaloneRegex = /-\s*((?:HD|Low|Medium|High)\s*Quality)\s*-/gi;
+    while ((m = standaloneRegex.exec(content)) !== null) {
+      markers.push({
+        title: `-${m[1].trim()}-`,
+        start: m.index + m[0].length,
+        end: m.index,
+      });
+    }
+  }
+
+  if (!markers.length) return sections;
+
+  markers.sort((a, b) => a.end - b.end);
+
+  for (let i = 0; i < markers.length; i++) {
+    const startPos = markers[i].start;
+    const endPos = i + 1 < markers.length ? markers[i + 1].end : content.length;
+    const sectionContent = content.slice(startPos, endPos);
+    const sectionLinks = extractDownloadLinks(sectionContent);
+
+    if (sectionLinks.length) {
+      sections.push({
+        title: markers[i].title,
+        badgeClass: getBadgeClass(markers[i].title),
+        links: sectionLinks,
+      });
+    }
+  }
+
+  return sections;
+}
+
+/** Extract synopsis (text paragraphs without download links/images) */
+function extractSynopsis(content: string): string {
+  let clean = content;
+  // Remove quality markers
+  clean = clean.replace(/<p[^>]*>\s*-?\s*(?:HD|Low|Medium|High)\s*Quality\s*-?\s*<\/p>/gi, "");
+  // Remove download links
+  clean = clean.replace(/<a[^>]*(?:download|cloud|xspeed|gdrive|urlpro|terabox|high|btspro24)[^>]*>.*?<\/a>/gis, "");
+  // Remove images
+  clean = clean.replace(/<img[^>]*>/gi, "");
+  // Remove download h2 headers
+  clean = clean.replace(/<h2[^>]*>.*?(?:download|link).*?<\/h2>/gis, "");
+
+  const paragraphs: string[] = [];
+  const pRegex = /<p[^>]*>(.*?)<\/p>/gis;
+  let pm;
+  while ((pm = pRegex.exec(clean)) !== null) {
+    const text = pm[1].replace(/<[^>]*>/g, "").trim();
+    if (text.length > 10 && !/^-?\s*(HD|Low|Medium|High)\s*Quality\s*-?$/i.test(text)) {
+      paragraphs.push(`<p>${pm[1]}</p>`);
+    }
+  }
+
+  return paragraphs.join("\n");
+}
+
+/** Main parse function */
+export function parsePostContent(html: string): ParsedContent {
+  if (!html) {
+    return { poster: null, synopsis: "", screenshots: [], downloadSections: [], extraHtml: "" };
+  }
+
+  const images = getContentImages(html);
+  const poster = images.length > 0 ? images[0] : null;
+  const screenshots = images.slice(1);
+  const synopsis = extractSynopsis(html);
+
+  // Try quality sections first
+  let downloadSections = extractQualitySections(html);
+
+  // Fallback: h2-based sections
+  if (!downloadSections.length) {
+    const h2Regex = /<h2[^>]*>([\s\S]*?)<\/h2>/gi;
+    const h2Matches: { title: string; index: number; length: number }[] = [];
+    let h2m;
+    while ((h2m = h2Regex.exec(html)) !== null) {
+      const title = h2m[1].replace(/<[^>]*>/g, "").trim();
+      if (title.toLowerCase().includes("download") || title.toLowerCase().includes("link")) {
+        h2Matches.push({ title, index: h2m.index, length: h2m[0].length });
+      }
+    }
+
+    if (h2Matches.length) {
+      for (let i = 0; i < h2Matches.length; i++) {
+        const start = h2Matches[i].index + h2Matches[i].length;
+        const end = i + 1 < h2Matches.length ? h2Matches[i + 1].index : html.length;
+        const sectionLinks = extractDownloadLinks(html.slice(start, end));
+        if (sectionLinks.length) {
+          downloadSections.push({
+            title: h2Matches[i].title,
+            badgeClass: getBadgeClass(h2Matches[i].title),
+            links: sectionLinks,
+          });
+        }
+      }
+    }
+  }
+
+  // Final fallback: group all links by URL quality
+  if (!downloadSections.length) {
+    const allLinks = extractDownloadLinks(html);
+    if (allLinks.length) {
+      downloadSections = groupByUrlQuality(allLinks);
+    }
+  }
+
+  return { poster, synopsis, screenshots, downloadSections, extraHtml: "" };
+}
+
+/** Render download sections as HTML string */
+export function renderDownloadSections(sections: DownloadSection[]): string {
+  if (!sections.length) return "";
+
+  return sections.map((section) => {
+    const linksHtml = section.links.map((link) =>
+      `<a href="${link.url}" target="_blank" rel="noopener noreferrer" class="download-link">${cloudDownloadIcon}<span>${link.label}</span></a>`
+    ).join("\n");
+
+    return `<div class="download-section">
+  <div class="download-header">
+    <div class="download-badge ${section.badgeClass}">
+      ${zapIcon}
+      ${section.title}
+      ${zapIcon}
+    </div>
+  </div>
+  <div class="download-links">
+    ${linksHtml}
+  </div>
+</div>`;
+  }).join("\n");
+}
+
+/** Legacy: Transform raw content to styled HTML (backward compat) */
 export const transformPostContent = (html: string): string => {
   if (!html) return "";
-
-  let content = html;
-
-  // 1. Clean up empty <center> and <p> tags
-  content = content.replace(/<center>\s*<\/center>/gi, "");
-  content = content.replace(/<p>\s*<\/p>/gi, "");
-
-  // 2. Transform quality section markers into styled section titles
-  // Patterns: "-HD Quality-", "-Low Quality-", "-Medium Quality-", etc.
-  content = content.replace(
-    /(?:<p[^>]*>)?\s*-\s*((?:HD|Low|Medium|High|HEVC|SD)\s*Quality)\s*-\s*(?:<\/p>)?/gi,
-    (_, quality) => {
-      const qLower = quality.toLowerCase();
-      const variant = (qLower.includes("low") || qLower.includes("sd")) ? " low" : "";
-      return `<div class="post-section-title${variant}">${quality}</div>`;
-    }
-  );
-
-  // Also handle "ডাউনলোড লিংক" / "Download Link" style section headers  
-  content = content.replace(
-    /(?:<p[^>]*>)?\s*-\s*((?:ডাউনলোড|Download)\s*(?:লিং[কখ]|Link)\s*.*?)\s*-\s*(?:<\/p>)?/gi,
-    (_, title) => {
-      const tLower = title.toLowerCase();
-      const variant = (tLower.includes("240") || tLower.includes("low") || tLower.includes("sd")) ? " low" : "";
-      return `<div class="post-section-title${variant}">${title}</div>`;
-    }
-  );
-
-  // Handle generic section headers wrapped in spans/strong
-  content = content.replace(
-    /(?:<p[^>]*>)\s*(?:<(?:span|strong)[^>]*>)?\s*-\s*(.*?)\s*-\s*(?:<\/(?:span|strong)>)?\s*(?:<\/p>)/gi,
-    (match, title) => {
-      const clean = title.replace(/<[^>]*>/g, "").trim();
-      if (clean.length > 3 && clean.length < 80) {
-        const tLower = clean.toLowerCase();
-        const variant = (tLower.includes("240") || tLower.includes("low") || tLower.includes("sd") || tLower.includes("convert")) ? " low" : "";
-        return `<div class="post-section-title${variant}">${clean}</div>`;
-      }
-      return match;
-    }
-  );
-
-  // 3. Transform plain download <a> tags (not already Dbtn class) into styled buttons
-  content = content.replace(
-    /<a\s+([^>]*?)href="([^"]+)"([^>]*?)>(.*?)<\/a>/gi,
-    (match, before, url, after, inner) => {
-      // Skip if it already has Dbtn class
-      if (before.includes("Dbtn") || after.includes("Dbtn")) return match;
-      // Skip if it's in a nav or header context
-      if (before.includes("nav") || after.includes("nav")) return match;
-
-      const label = inner.replace(/<[^>]*>/g, "").trim();
-      if (!label) return match;
-
-      // Check if it's a download link
-      if (isDownloadLink(url, label)) {
-        const btnType = getButtonType(url, label);
-        return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="Dbtn ${btnType}"><span>${label}</span></a>`;
-      }
-
-      // For premium/subscription links, style differently
-      if (
-        url.includes("panel.") ||
-        label.includes("প্রিমিয়াম") ||
-        label.includes("সাবস্ক্রিপশন")
-      ) {
-        return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="Dbtn watch"><span>${label}</span></a>`;
-      }
-
-      return match;
-    }
-  );
-
-  // 4. Wrap consecutive Dbtn links in a download-links container
-  // Find sequences of Dbtn links and wrap them
-  content = content.replace(
-    /(<a[^>]*class="[^"]*Dbtn[^"]*"[^>]*>.*?<\/a>\s*(?:\n|\r|\s)*)+/gi,
-    (match) => {
-      return `<div class="episode-download-links">${match}</div>`;
-    }
-  );
-
-  // 5. Remove --- separators and replace with styled separator
-  content = content.replace(
-    /(?:<p[^>]*>)?\s*---\s*(?:<\/p>)?/gi,
-    '<div class="episode-separator"></div>'
-  );
-
-  // 6. Clean up nested <center> tags - convert to proper alignment
-  content = content.replace(/<center>/gi, '<div style="text-align:center">');
-  content = content.replace(/<\/center>/gi, "</div>");
-
-  return content;
+  const parsed = parsePostContent(html);
+  return renderDownloadSections(parsed.downloadSections);
 };
