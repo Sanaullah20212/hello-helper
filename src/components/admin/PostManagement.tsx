@@ -325,14 +325,14 @@ const PostManagement = () => {
               </CardHeader>
               <CardContent>
                 <Select
-                  value={formData.category_id}
-                  onValueChange={(v) => setFormData({ ...formData, category_id: v })}
+                  value={formData.category_id || "none"}
+                  onValueChange={(v) => setFormData({ ...formData, category_id: v === "none" ? "" : v })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="ক্যাটাগরি সিলেক্ট করুন" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">কোনো ক্যাটাগরি নেই</SelectItem>
+                    <SelectItem value="none">কোনো ক্যাটাগরি নেই</SelectItem>
                     {categories.map((cat) => (
                       <SelectItem key={cat.id} value={cat.id}>
                         {cat.name}
