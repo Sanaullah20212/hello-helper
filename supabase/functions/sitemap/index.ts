@@ -6,7 +6,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const SITE_URL = "https://www.bengalitvserial24.com";
+const SITE_URL = "https://www.btspro24.com";
 
 // Types
 interface Show {

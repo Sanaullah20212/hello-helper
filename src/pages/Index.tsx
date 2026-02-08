@@ -13,12 +13,12 @@ const Index = () => {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "Bengalitvserial24",
-    "url": "https://www.bengalitvserial24.com",
-    "description": "The best website to download Bengali serials and TV shows.",
+    "name": "BTSPRO24",
+    "url": "https://www.btspro24.com",
+    "description": "বাংলা মুভি, সিরিয়াল এবং টিভি শো ডাউনলোড করার জন্য সেরা ওয়েবসাইট।",
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://www.bengalitvserial24.com/search?q={search_term_string}",
+      "target": "https://www.btspro24.com/search?q={search_term_string}",
       "query-input": "required name=search_term_string"
     }
   };
@@ -30,11 +30,11 @@ const Index = () => {
       
       {/* SEO Meta Tags */}
       <SEOHead
-        title="Bengalitvserial24.com | Bengali TV Serial Video Download"
-        description="The best website to download Bengali serials and TV shows."
-        keywords="Bengalitvserial,Bengalitvserial24,bengalitvserial24.com,bengali tv serial download,Bengali tv serial download site,bengali tv serial download website"
+        title="BTSPRO24.Com | Bengali TV Serial & Movie Download"
+        description="বাংলা মুভি, সিরিয়াল এবং টিভি শো ডাউনলোড করার জন্য সেরা ওয়েবসাইট।"
+        keywords="BTSPRO24,btspro24.com,bengali tv serial download,bangla movie download,Bengali tv serial download site"
         jsonLd={jsonLd}
-        canonical="https://www.bengalitvserial24.com"
+        canonical="https://www.btspro24.com"
       />
       
       <Header />

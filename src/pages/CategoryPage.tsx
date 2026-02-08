@@ -139,9 +139,9 @@ const CategoryPage = () => {
       <PageTracker />
       
       <SEOHead
-        title={`${categoryName} TV Serials Online - Watch & Download All ${categoryName} Shows HD | BengaliTVSerial24`}
-        description={`Watch all ${categoryName} TV serials online in full HD on BengaliTVSerial24. Browse ${shows?.length || ''} popular Bengali TV shows, latest episodes & more from ${categoryName}.`}
-        canonical={`https://www.bengalitvserial24.com${isSection ? '/category/section' : '/category'}/${slug}`}
+        title={`${categoryName} TV Serials Online - Watch & Download All ${categoryName} Shows HD | BTSPRO24`}
+        description={`Watch all ${categoryName} TV serials online in full HD on BTSPRO24. Browse ${shows?.length || ''} popular Bengali TV shows, latest episodes & more from ${categoryName}.`}
+        canonical={`https://www.btspro24.com${isSection ? '/category/section' : '/category'}/${slug}`}
         keywords={`${categoryName},${categoryName} serials,${categoryName} shows,bengali tv serial,${categoryName} download,watch ${categoryName} online`}
       />
 

@@ -26,9 +26,9 @@ const SEOHead = ({
   const { data: settings } = useSiteSettings();
   
   // Use settings as fallbacks
-  const finalTitle = title || settings?.site_title || 'Bengalitvserial24.com | Bengali TV Serial Video Download';
-  const finalDescription = description || settings?.site_description || 'The best website to download Bengali serials and TV shows.';
-  const finalKeywords = keywords || settings?.site_keywords || 'Bengalitvserial,Bengalitvserial24,bengalitvserial24.com,bengali tv serial download';
+  const finalTitle = title || settings?.site_title || 'BTSPRO24.Com | Bengali TV Serial & Movie Download';
+  const finalDescription = description || settings?.site_description || 'বাংলা মুভি, সিরিয়াল এবং টিভি শো ডাউনলোড করার জন্য সেরা ওয়েবসাইট।';
+  const finalKeywords = keywords || settings?.site_keywords || 'BTSPRO24,btspro24.com,bengali tv serial download,bangla movie download';
   
   useEffect(() => {
     // Update document title
@@ -67,7 +67,7 @@ const SEOHead = ({
     updateMeta('og:title', finalTitle, true);
     updateMeta('og:description', finalDescription, true);
     updateMeta('og:type', ogType, true);
-    updateMeta('og:site_name', settings?.site_title || 'Bengalitvserial24.com', true);
+    updateMeta('og:site_name', settings?.site_title || 'BTSPRO24', true);
     updateMeta('og:locale', 'en_US', true);
     
     if (ogImage) {
@@ -119,9 +119,9 @@ const SEOHead = ({
       orgSchema.textContent = JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Organization",
-        "name": settings?.site_title || "Bengalitvserial24.com",
+        "name": settings?.site_title || "BTSPRO24",
         "description": settings?.site_description || finalDescription,
-        "url": "https://www.bengalitvserial24.com"
+        "url": "https://www.btspro24.com"
       });
       document.head.appendChild(orgSchema);
     }

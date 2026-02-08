@@ -132,11 +132,11 @@ const PlayerPage = () => {
       <PageTracker showId={show.id} episodeId={currentEpisode.id} />
       
       <SEOHead
-        title={`${show.title} ${currentEpisode.title} - Watch & Download HD Episode Online | BengaliTVSerial24`}
-        description={`Watch ${show.title} ${currentEpisode.title} full episode online in HD quality. Episode ${currentEpisode.episode_number}${currentEpisode.air_date ? ` aired on ${currentEpisode.air_date}` : ''}. Free Bengali TV serial download on BengaliTVSerial24.`}
+        title={`${show.title} ${currentEpisode.title} - Watch & Download HD Episode Online | BTSPRO24`}
+        description={`Watch ${show.title} ${currentEpisode.title} full episode online in HD quality. Episode ${currentEpisode.episode_number}${currentEpisode.air_date ? ` aired on ${currentEpisode.air_date}` : ''}. Free Bengali TV serial download on BTSPRO24.`}
         ogImage={currentEpisode.thumbnail_url || show.poster_url || show.thumbnail_url || undefined}
         ogType="video.episode"
-        canonical={`https://www.bengalitvserial24.com/watch/${showSlug}/${episodeSlug}`}
+        canonical={`https://www.btspro24.com/watch/${showSlug}/${episodeSlug}`}
         keywords={`${show.title},${currentEpisode.title},${show.title} episode ${currentEpisode.episode_number},watch ${show.title} online,bengali tv serial download`}
         jsonLd={{
           "@context": "https://schema.org",
@@ -146,11 +146,11 @@ const PlayerPage = () => {
           "datePublished": currentEpisode.air_date,
           "description": `Watch ${show.title} ${currentEpisode.title} Episode ${currentEpisode.episode_number} online in HD.`,
           "image": currentEpisode.thumbnail_url || show.poster_url,
-          "url": `https://www.bengalitvserial24.com/watch/${showSlug}/${episodeSlug}`,
+          "url": `https://www.btspro24.com/watch/${showSlug}/${episodeSlug}`,
           "partOfSeries": {
             "@type": "TVSeries",
             "name": show.title,
-            "url": `https://www.bengalitvserial24.com/show/${showSlug}`
+            "url": `https://www.btspro24.com/show/${showSlug}`
           }
         }}
       />
