@@ -171,68 +171,92 @@
 
   /* Episode Download Links */
   .episode-download-links {
-    @apply flex flex-col items-center gap-3 py-4;
+    @apply flex flex-col items-center gap-3 py-3;
   }
 
   .episode-separator {
-    @apply text-center text-muted-foreground my-2 text-sm;
+    @apply my-3;
+    border: none;
+    border-top: 1px dashed #ddd;
   }
 
-  /* Download Buttons - Matching btspro24.com style */
+  /* Download Buttons - Pill Style matching btspro24.com */
   .Dbtn {
-    @apply inline-flex items-center justify-center px-6 py-3 rounded-md font-semibold transition-all duration-300 text-sm min-w-[200px] text-center;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.5rem 0.75rem 1.5rem;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.3s;
+    text-decoration: none;
     background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
     color: #1a1a1a;
-    box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+    min-width: 200px;
+    text-align: center;
+    justify-content: center;
   }
 
   .Dbtn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+    box-shadow: 0 6px 20px rgba(251, 191, 36, 0.4);
     background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   }
 
-  /* HD Download Button */
+  /* HD Download Button - Orange */
   .Dbtn.hd {
-    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-    color: #1a1a1a;
+    background: linear-gradient(135deg, #ff7043 0%, #f4511e 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(244, 81, 30, 0.3);
   }
 
   .Dbtn.hd:hover {
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    box-shadow: 0 6px 20px rgba(244, 81, 30, 0.4);
+    background: linear-gradient(135deg, #f4511e 0%, #e64a19 100%);
   }
 
-  /* Watch Online Button */
+  /* Watch Online Button - Gray */
   .Dbtn.watch {
     background: linear-gradient(135deg, #78909c 0%, #546e7a 100%);
     color: white;
-    box-shadow: 0 2px 8px rgba(84, 110, 122, 0.3);
+    box-shadow: 0 4px 15px rgba(84, 110, 122, 0.3);
   }
 
   .Dbtn.watch:hover {
     background: linear-gradient(135deg, #546e7a 0%, #455a64 100%);
-    box-shadow: 0 4px 12px rgba(84, 110, 122, 0.4);
+    box-shadow: 0 6px 20px rgba(84, 110, 122, 0.4);
   }
 
-  /* HEVC Button */
+  /* HEVC Button - Green */
   .Dbtn.hevc {
-    background: linear-gradient(135deg, #26a69a 0%, #00897b 100%);
+    background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
     color: white;
-    box-shadow: 0 2px 8px rgba(0, 137, 123, 0.3);
+    box-shadow: 0 4px 15px rgba(67, 160, 71, 0.3);
   }
 
-  /* SD Button */
+  .Dbtn.hevc:hover {
+    box-shadow: 0 6px 20px rgba(67, 160, 71, 0.4);
+  }
+
+  /* SD/Low Button - Amber */
   .Dbtn.sd {
-    background: linear-gradient(135deg, #ab47bc 0%, #8e24aa 100%);
-    color: white;
-    box-shadow: 0 2px 8px rgba(142, 36, 170, 0.3);
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    color: #1a1a1a;
+    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
   }
 
-  /* SUB Button */
+  .Dbtn.sd:hover {
+    box-shadow: 0 6px 20px rgba(251, 191, 36, 0.4);
+  }
+
+  /* SUB Button - Blue */
   .Dbtn.sub {
     background: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%);
     color: white;
-    box-shadow: 0 2px 8px rgba(30, 136, 229, 0.3);
+    box-shadow: 0 4px 15px rgba(30, 136, 229, 0.3);
   }
 
   /* Section headers */
@@ -717,7 +741,7 @@
   line-height: 1.4;
 }
 
-/* Override wordpress-preview text color inside white card */
+/* Override wordpress-preview colors inside white card */
 .post-article-card .wordpress-preview {
   color: #333;
 }
@@ -729,6 +753,49 @@
 .post-article-card .wordpress-preview h2,
 .post-article-card .wordpress-preview h3 {
   color: #1a1a1a;
+}
+
+/* Links inside white card should remain colored */
+.post-article-card .wordpress-preview p a {
+  color: #2196f3;
+}
+
+.post-article-card .wordpress-preview p a:hover {
+  color: #1976d2;
+}
+
+/* Images inside white card */
+.post-article-card .wordpress-preview img:not([src*="emoji"]) {
+  max-width: 420px;
+  width: 100%;
+  border-radius: 0.75rem;
+  margin: 1.5rem auto;
+  display: block;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 2px solid #eee;
+}
+
+/* Post section titles inside white card */
+.post-article-card .post-section-title {
+  margin: 1.5rem -1rem 0.75rem;
+  border-radius: 0;
+}
+
+@media (min-width: 640px) {
+  .post-article-card .post-section-title {
+    margin: 1.5rem -1.5rem 0.75rem;
+  }
+}
+
+/* Download buttons inside white card */
+.post-article-card .episode-download-links {
+  padding: 1rem 0;
+}
+
+/* Separator inside white card */
+.post-article-card .episode-separator {
+  border-top-color: #eee;
+  margin: 0.75rem 0;
 }
 
 /* Widget Title Bar */

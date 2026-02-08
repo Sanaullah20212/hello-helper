@@ -6,6 +6,7 @@ import SEOHead from "@/components/SEOHead";
 import PageTracker from "@/components/PageTracker";
 import LazyImage from "@/components/ui/LazyImage";
 import { Calendar, ArrowLeft, FolderOpen, FileText, User, Clock, Eye, MessageCircle } from "lucide-react";
+import { transformPostContent } from "@/lib/transformPostContent";
 import { Button } from "@/components/ui/button";
 
 const PostPage = () => {
@@ -142,7 +143,7 @@ const PostPage = () => {
           {/* Content */}
           <div
             className="wordpress-preview"
-            dangerouslySetInnerHTML={{ __html: post.content || "" }}
+            dangerouslySetInnerHTML={{ __html: transformPostContent(post.content || "") }}
           />
         </article>
 
