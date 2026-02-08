@@ -66,15 +66,33 @@ export const transformPostContent = (html: string): string => {
   content = content.replace(
     /(?:<p[^>]*>)?\s*-\s*((?:HD|Low|Medium|High|HEVC|SD)\s*Quality)\s*-\s*(?:<\/p>)?/gi,
     (_, quality) => {
-      return `<div class="post-section-title download">${downloadIcon}<span>${quality}</span></div>`;
+      const qLower = quality.toLowerCase();
+      const variant = (qLower.includes("low") || qLower.includes("sd")) ? " low" : "";
+      return `<div class="post-section-title${variant}">${quality}</div>`;
     }
   );
 
-  // Also handle "ডাউনলোড লিংক" style section headers
+  // Also handle "ডাউনলোড লিংক" / "Download Link" style section headers  
   content = content.replace(
-    /(?:<p[^>]*>)?\s*-\s*(ডাউনলোড লিং[কখ].*?)\s*-\s*(?:<\/p>)?/gi,
+    /(?:<p[^>]*>)?\s*-\s*((?:ডাউনলোড|Download)\s*(?:লিং[কখ]|Link)\s*.*?)\s*-\s*(?:<\/p>)?/gi,
     (_, title) => {
-      return `<div class="post-section-title download">${downloadIcon}<span>${title}</span></div>`;
+      const tLower = title.toLowerCase();
+      const variant = (tLower.includes("240") || tLower.includes("low") || tLower.includes("sd")) ? " low" : "";
+      return `<div class="post-section-title${variant}">${title}</div>`;
+    }
+  );
+
+  // Handle generic section headers wrapped in spans/strong
+  content = content.replace(
+    /(?:<p[^>]*>)\s*(?:<(?:span|strong)[^>]*>)?\s*-\s*(.*?)\s*-\s*(?:<\/(?:span|strong)>)?\s*(?:<\/p>)/gi,
+    (match, title) => {
+      const clean = title.replace(/<[^>]*>/g, "").trim();
+      if (clean.length > 3 && clean.length < 80) {
+        const tLower = clean.toLowerCase();
+        const variant = (tLower.includes("240") || tLower.includes("low") || tLower.includes("sd") || tLower.includes("convert")) ? " low" : "";
+        return `<div class="post-section-title${variant}">${clean}</div>`;
+      }
+      return match;
     }
   );
 
