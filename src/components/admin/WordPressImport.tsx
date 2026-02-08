@@ -231,7 +231,12 @@ const WordPressImport = () => {
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      console.log("[WP Import] No file selected");
+      return;
+    }
+
+    console.log("[WP Import] File selected:", file.name, "Size:", (file.size / 1024 / 1024).toFixed(2), "MB");
 
     if (!file.name.endsWith(".xml")) {
       toast.error("শুধুমাত্র .xml ফাইল আপলোড করুন (WordPress Export)");
@@ -239,9 +244,14 @@ const WordPressImport = () => {
     }
 
     setIsParsing(true);
+    toast.info("XML ফাইল পার্সিং শুরু হচ্ছে...");
+
     try {
       const text = await file.text();
+      console.log("[WP Import] File read complete, length:", text.length);
+
       const { categories, posts } = parseWXR(text);
+      console.log("[WP Import] Parsed:", posts.length, "posts,", categories.length, "categories");
 
       // Mark existing categories
       const catsWithExisting = categories.map((cat) => {
@@ -259,10 +269,11 @@ const WordPressImport = () => {
         `${posts.length}টি পোস্ট এবং ${categories.length}টি ক্যাটাগরি পাওয়া গেছে`
       );
     } catch (err: any) {
+      console.error("[WP Import] Error:", err);
       toast.error(err.message || "XML পার্সিং এ সমস্যা হয়েছে");
     } finally {
       setIsParsing(false);
-      // Reset file input
+      // Reset file input so same file can be selected again
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
