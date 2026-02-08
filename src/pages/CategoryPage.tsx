@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, Link, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,9 +7,11 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import LazyImage from "@/components/ui/LazyImage";
 import { BodyAd, InArticleAd } from "@/components/AdManager";
-import { Folder, Film, Play, FileText, Calendar } from "lucide-react";
+import { Folder, Film, Play, FileText, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PageTracker from "@/components/PageTracker";
+
+const POSTS_PER_PAGE = 30;
 
 interface Show {
   id: string;
@@ -52,6 +55,7 @@ const extractFirstImage = (html: string | null | undefined): string | null => {
 const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const location = useLocation();
+  const [postPage, setPostPage] = useState(1);
 
   // Check if route is /category/section/:slug
   const isSection = location.pathname.includes("/category/section/");
@@ -261,58 +265,119 @@ const CategoryPage = () => {
           )}
 
           {/* Posts Grid */}
-          {!isLoading && !isError && posts.length > 0 && (
-            <>
-              {shows && shows.length > 0 && (
-                <div className="section-header-line my-6">
-                  <FileText className="w-4 h-4 text-primary" />
-                  <h2 className="text-base font-semibold text-foreground whitespace-nowrap">Posts</h2>
+          {!isLoading && !isError && posts.length > 0 && (() => {
+            const totalPostPages = Math.ceil(posts.length / POSTS_PER_PAGE);
+            const startIdx = (postPage - 1) * POSTS_PER_PAGE;
+            const paginatedPosts = posts.slice(startIdx, startIdx + POSTS_PER_PAGE);
+
+            const getPageNumbers = () => {
+              const pages: (number | "...")[] = [];
+              if (totalPostPages <= 7) {
+                for (let i = 1; i <= totalPostPages; i++) pages.push(i);
+              } else {
+                pages.push(1);
+                if (postPage > 3) pages.push("...");
+                const start = Math.max(2, postPage - 1);
+                const end = Math.min(totalPostPages - 1, postPage + 1);
+                for (let i = start; i <= end; i++) pages.push(i);
+                if (postPage < totalPostPages - 2) pages.push("...");
+                pages.push(totalPostPages);
+              }
+              return pages;
+            };
+
+            return (
+              <>
+                {shows && shows.length > 0 && (
+                  <div className="section-header-line my-6">
+                    <FileText className="w-4 h-4 text-primary" />
+                    <h2 className="text-base font-semibold text-foreground whitespace-nowrap">Posts</h2>
+                  </div>
+                )}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+                  {paginatedPosts.map((post) => {
+                    const imageUrl = post.featured_image_url || extractFirstImage(post.content);
+                    return (
+                      <Link
+                        key={post.id}
+                        to={`/${post.slug}`}
+                        className="movie-card group aspect-[2/3]"
+                      >
+                        {imageUrl ? (
+                          <LazyImage
+                            src={imageUrl}
+                            alt={post.title}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            wrapperClassName="w-full h-full"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-secondary">
+                            <FileText className="w-10 h-10 text-muted-foreground/30" />
+                          </div>
+                        )}
+                        {post.tags && post.tags.length > 0 && (
+                          <span className="absolute top-2 left-2 z-10 px-2 py-0.5 text-[10px] sm:text-xs font-semibold bg-primary text-primary-foreground rounded-md shadow-md">
+                            {post.tags[0]}
+                          </span>
+                        )}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-primary/95 flex items-center justify-center opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 shadow-lg z-10">
+                          <Play className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground ml-0.5" fill="currentColor" />
+                        </div>
+                        <div className="movie-card-overlay">
+                          <h3 className="text-sm font-semibold text-foreground line-clamp-2 leading-tight">
+                            {post.title}
+                          </h3>
+                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
+                            <Calendar className="w-3 h-3" />
+                            <span>{new Date(post.created_at).getFullYear()}</span>
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
                 </div>
-              )}
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
-                {posts.map((post) => {
-                  const imageUrl = post.featured_image_url || extractFirstImage(post.content);
-                  return (
-                    <Link
-                      key={post.id}
-                      to={`/${post.slug}`}
-                      className="movie-card group aspect-[2/3]"
+
+                {/* Pagination */}
+                {totalPostPages > 1 && (
+                  <div className="flex items-center justify-center gap-1.5 mt-8">
+                    <button
+                      onClick={() => { setPostPage((p) => Math.max(1, p - 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                      disabled={postPage === 1}
+                      className="pagination-btn"
+                      aria-label="Previous page"
                     >
-                      {imageUrl ? (
-                        <LazyImage
-                          src={imageUrl}
-                          alt={post.title}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                          wrapperClassName="w-full h-full"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-secondary">
-                          <FileText className="w-10 h-10 text-muted-foreground/30" />
-                        </div>
-                      )}
-                      {post.tags && post.tags.length > 0 && (
-                        <span className="absolute top-2 left-2 z-10 px-2 py-0.5 text-[10px] sm:text-xs font-semibold bg-primary text-primary-foreground rounded-md shadow-md">
-                          {post.tags[0]}
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+
+                    {getPageNumbers().map((page, idx) =>
+                      page === "..." ? (
+                        <span key={`ellipsis-${idx}`} className="px-2 text-muted-foreground text-sm">
+                          ···
                         </span>
-                      )}
-                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-primary/95 flex items-center justify-center opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 shadow-lg z-10">
-                        <Play className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground ml-0.5" fill="currentColor" />
-                      </div>
-                      <div className="movie-card-overlay">
-                        <h3 className="text-sm font-semibold text-foreground line-clamp-2 leading-tight">
-                          {post.title}
-                        </h3>
-                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
-                          <Calendar className="w-3 h-3" />
-                          <span>{new Date(post.created_at).getFullYear()}</span>
-                        </div>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            </>
-          )}
+                      ) : (
+                        <button
+                          key={page}
+                          onClick={() => { setPostPage(page as number); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                          className={`pagination-btn ${postPage === page ? "active" : ""}`}
+                        >
+                          {page}
+                        </button>
+                      )
+                    )}
+
+                    <button
+                      onClick={() => { setPostPage((p) => Math.min(totalPostPages, p + 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                      disabled={postPage === totalPostPages}
+                      className="pagination-btn"
+                      aria-label="Next page"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </>
+            );
+          })()}
 
           {/* Empty State */}
           {!isLoading && !isError && (shows?.length === 0) && posts.length === 0 && (
