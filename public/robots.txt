@@ -1,14 +1,47 @@
+# BengaliTVSerial24 Robots.txt
+# Last updated: 2026-01-26
+
+# Main search engine crawlers - allow everything
 User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Googlebot-Image
 Allow: /
 
 User-agent: Bingbot
 Allow: /
+Crawl-delay: 2
 
+User-agent: Yandexbot
+Allow: /
+Crawl-delay: 3
+
+# Social media bots - allow for sharing
 User-agent: Twitterbot
 Allow: /
 
 User-agent: facebookexternalhit
 Allow: /
 
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: Discordbot
+Allow: /
+
+User-agent: TelegramBot
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+# All other bots
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /admin/*
+Crawl-delay: 3
+
+# Sitemap Index (like Rank Math)
+Sitemap: https://www.bengalitvserial24.com/sitemap_index.xml
