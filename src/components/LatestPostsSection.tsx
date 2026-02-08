@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useLatestPosts } from "@/hooks/usePosts";
-import { ArrowRight, FileText, Play, Calendar } from "lucide-react";
+import { ArrowRight, FileText } from "lucide-react";
 import LazyImage from "@/components/ui/LazyImage";
 
 /** Extract the first <img> src from HTML content */
@@ -63,48 +63,33 @@ const LatestPostsSection = () => {
               <Link
                 key={post.id}
                 to={`/post/${post.slug}`}
-                className="group flex-shrink-0 w-[130px] sm:w-[160px] md:w-[180px] lg:w-[200px] block rounded-lg overflow-hidden border border-primary/30 hover:border-primary/60 bg-card transition-all duration-300 hover:scale-105"
+                className={`relative flex-shrink-0 group/card rounded-lg overflow-hidden transition-transform duration-300 hover:scale-105 hover:z-10 w-[130px] sm:w-[160px] md:w-[180px] lg:w-[200px] aspect-[2/3]`}
               >
-                {/* Image Area */}
-                <div className="relative aspect-[2/3] overflow-hidden bg-secondary">
-                  {imageUrl ? (
-                    <LazyImage
-                      src={imageUrl}
-                      alt={post.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <FileText className="w-10 h-10 text-muted-foreground/30" />
-                    </div>
-                  )}
-
-                  {/* Badge */}
-                  <div className="absolute top-2 left-2 bg-primary text-primary-foreground text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">
-                    New Post
+                {/* Image */}
+                {imageUrl ? (
+                  <LazyImage
+                    src={imageUrl}
+                    alt={post.title}
+                    className="w-full h-full object-cover"
+                    wrapperClassName="w-full h-full"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-secondary">
+                    <FileText className="w-10 h-10 text-muted-foreground/30" />
                   </div>
+                )}
 
-                  {/* Play Button Center */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/80 backdrop-blur-sm flex items-center justify-center group-hover:bg-primary group-hover:scale-110 transition-all duration-300 shadow-lg">
-                      <Play className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground fill-primary-foreground ml-0.5" />
-                    </div>
-                  </div>
+                {/* Badge */}
+                <span className="absolute top-2 right-2 px-2 py-0.5 text-[10px] sm:text-xs font-bold text-white rounded bg-pink-500 shadow-lg">
+                  NEW POST
+                </span>
 
-                  {/* Bottom Gradient */}
-                  <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-card to-transparent" />
-                </div>
-
-                {/* Info Area Below Image */}
-                <div className="p-2.5 sm:p-3">
-                  <h3 className="font-semibold text-foreground text-xs sm:text-sm line-clamp-2 group-hover:text-primary transition-colors leading-snug">
-                    {post.title}
-                  </h3>
-                  <div className="flex items-center gap-1 text-[10px] sm:text-xs text-muted-foreground mt-1.5">
-                    <Calendar className="w-3 h-3" />
-                    {new Date(post.created_at).toLocaleDateString("en-US", {
-                      year: "numeric",
-                    })}
+                {/* Hover overlay with title */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 flex items-end">
+                  <div className="p-2 sm:p-3 w-full">
+                    <h3 className="text-white text-xs sm:text-sm font-medium line-clamp-2">
+                      {post.title}
+                    </h3>
                   </div>
                 </div>
               </Link>
