@@ -1,7 +1,6 @@
 import Header from "@/components/Header";
 import HeroSlider from "@/components/HeroSlider";
 import CategoryCarousel from "@/components/CategoryCarousel";
-import LatestEpisodesCarousel from "@/components/LatestEpisodesCarousel";
 import LatestPostsSection from "@/components/LatestPostsSection";
 import ContentSections from "@/components/ContentSections";
 import Footer from "@/components/Footer";
@@ -49,9 +48,7 @@ const Index = () => {
         <BodyAd className="my-4" />
       </div>
       
-      <LatestEpisodesCarousel />
-      
-      {/* Latest Posts */}
+      {/* Latest Posts / Updates */}
       <LatestPostsSection />
       
       <ContentSections />
