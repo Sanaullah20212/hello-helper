@@ -37,7 +37,7 @@ const LatestPostsSection = () => {
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-lg sm:text-xl font-bold text-foreground flex items-center gap-2">
             <FileText className="w-5 h-5 text-primary" />
-            সাম্প্রতিক পোস্ট
+            Latest Update
           </h2>
           <Link
             to="/posts"
