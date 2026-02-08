@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useLatestPosts } from "@/hooks/usePosts";
-import { ArrowRight, FileText } from "lucide-react";
+import { ArrowRight, FileText, Clock, Calendar, Play } from "lucide-react";
 import LazyImage from "@/components/ui/LazyImage";
 
 /** Extract the first <img> src from HTML content */
@@ -16,17 +16,14 @@ const LatestPostsSection = () => {
   if (isLoading) {
     return (
       <section className="py-6 md:py-8">
-        <div className="max-w-[1600px] mx-auto px-3 sm:px-4">
-          <div className="h-7 w-48 bg-muted rounded animate-pulse mb-6" />
+        <div className="max-w-[1400px] mx-auto px-3 sm:px-4">
+          <div className="section-header mb-5">
+            <Clock className="w-5 h-5 text-primary" />
+            <span className="text-lg font-semibold text-foreground">Latest Update</span>
+          </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="animate-pulse rounded-xl overflow-hidden border border-border/30">
-                <div className="aspect-[3/4] bg-muted" />
-                <div className="p-3 space-y-2 bg-card">
-                  <div className="h-4 bg-muted rounded w-3/4" />
-                  <div className="h-3 bg-muted rounded w-1/2" />
-                </div>
-              </div>
+              <div key={i} className="animate-pulse rounded-xl overflow-hidden aspect-[2/3] bg-muted" />
             ))}
           </div>
         </div>
@@ -38,24 +35,24 @@ const LatestPostsSection = () => {
 
   return (
     <section className="py-6 md:py-8">
-      <div className="max-w-[1600px] mx-auto px-3 sm:px-4">
-        {/* Section Header */}
+      <div className="max-w-[1400px] mx-auto px-3 sm:px-4">
+        {/* Section Header - WP style */}
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-lg sm:text-xl font-bold text-foreground flex items-center gap-2">
-            <FileText className="w-5 h-5 text-primary" />
-            Latest Update
-          </h2>
+          <div className="section-header flex-1">
+            <Clock className="w-5 h-5 text-primary" />
+            <h2 className="text-lg font-semibold text-foreground">Latest Update</h2>
+          </div>
           <Link
             to="/posts"
-            className="text-sm text-primary hover:text-primary/80 flex items-center gap-1 transition-colors"
+            className="text-sm text-primary hover:text-primary/80 flex items-center gap-1 transition-colors ml-3 shrink-0"
           >
             সব দেখুন
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 
-        {/* Posts Grid */}
-        <div className="flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide scroll-smooth">
+        {/* Posts Grid - WP movie-card style */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
           {posts.map((post) => {
             const imageUrl = post.featured_image_url || extractFirstImage(post.content);
 
@@ -63,14 +60,14 @@ const LatestPostsSection = () => {
               <Link
                 key={post.id}
                 to={`/${post.slug}`}
-                className={`relative flex-shrink-0 group/card rounded-lg overflow-hidden transition-transform duration-300 hover:scale-105 hover:z-10 w-[130px] sm:w-[160px] md:w-[180px] lg:w-[200px] aspect-[2/3]`}
+                className="movie-card group aspect-[2/3]"
               >
                 {/* Image */}
                 {imageUrl ? (
                   <LazyImage
                     src={imageUrl}
                     alt={post.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     wrapperClassName="w-full h-full"
                   />
                 ) : (
@@ -79,17 +76,26 @@ const LatestPostsSection = () => {
                   </div>
                 )}
 
-                {/* Badge */}
-                <span className="absolute top-2 right-2 px-2 py-0.5 text-[10px] sm:text-xs font-bold text-white rounded bg-pink-500 shadow-lg">
-                  NEW POST
-                </span>
+                {/* Category badge top-left */}
+                {post.tags && post.tags.length > 0 && (
+                  <span className="absolute top-2 left-2 z-10 px-2 py-0.5 text-[10px] sm:text-xs font-semibold bg-primary text-primary-foreground rounded-md shadow-md">
+                    {post.tags[0]}
+                  </span>
+                )}
 
-                {/* Hover overlay with title */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 flex items-end">
-                  <div className="p-2 sm:p-3 w-full">
-                    <h3 className="text-white text-xs sm:text-sm font-medium line-clamp-2">
-                      {post.title}
-                    </h3>
+                {/* Play button center - hover */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-primary/95 flex items-center justify-center opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 shadow-lg z-10">
+                  <Play className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground ml-0.5" fill="currentColor" />
+                </div>
+
+                {/* Gradient overlay + info */}
+                <div className="movie-card-overlay">
+                  <h3 className="text-sm font-semibold text-foreground line-clamp-2 leading-tight">
+                    {post.title}
+                  </h3>
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
+                    <Calendar className="w-3 h-3" />
+                    <span>{new Date(post.created_at).getFullYear()}</span>
                   </div>
                 </div>
               </Link>
