@@ -4,7 +4,8 @@ import { useContentCategories } from "@/hooks/useContent";
 const CategoryBadges = () => {
   const { data: categories, isLoading } = useContentCategories();
 
-  const activeCategories = categories?.filter((cat) => cat.is_active) || [];
+  const activeCategories = (categories?.filter((cat) => cat.is_active) || [])
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   if (isLoading) {
     return (
