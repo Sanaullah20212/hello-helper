@@ -547,27 +547,101 @@
   height: 0;
 }
 
-/* WordPress Preview Styles */
+/* WordPress Preview Styles - btspro24.com matching */
 .wordpress-preview {
   font-family: 'Hind Siliguri', 'Inter', sans-serif;
   color: hsl(var(--foreground));
   line-height: 1.75;
+  text-align: center;
 }
 
 .wordpress-preview h1 { font-size: 2rem; font-weight: 700; margin-bottom: 1rem; }
-.wordpress-preview h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.75rem; }
-.wordpress-preview h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; }
-.wordpress-preview p { margin-bottom: 0.75rem; }
-.wordpress-preview img { max-width: 100%; border-radius: 0.5rem; margin: 1rem 0; }
-.wordpress-preview a { color: hsl(var(--primary)); text-decoration: underline; }
+.wordpress-preview h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  margin-top: 1.5rem;
+}
+.wordpress-preview h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.wordpress-preview p {
+  margin-bottom: 0.75rem;
+}
+
+/* Centered images with rounded corners */
+.wordpress-preview img {
+  max-width: 100%;
+  border-radius: 0.75rem;
+  margin: 1rem auto;
+  display: block;
+}
+
+/* Style download links as buttons */
+.wordpress-preview h3 a,
+.wordpress-preview p a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-decoration: none;
+  color: hsl(var(--primary-foreground));
+  background: hsl(var(--primary));
+  border: 1px solid hsl(var(--primary));
+  transition: all 0.3s ease;
+  min-width: 220px;
+  margin: 0.25rem 0;
+}
+
+.wordpress-preview h3 a:hover,
+.wordpress-preview p a:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px hsl(var(--primary) / 0.3);
+}
+
+/* Download section title styling */
+.wordpress-preview p span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  background: hsl(var(--secondary));
+  border: 1px solid hsl(var(--border));
+  margin: 0.5rem 0;
+  width: 100%;
+  max-width: 320px;
+}
+
+/* Emoji icons next to download titles */
+.wordpress-preview img[src*="emoji"] {
+  display: inline;
+  width: 1.25em;
+  height: 1.25em;
+  margin: 0 0.15em;
+  vertical-align: middle;
+  border-radius: 0;
+}
+
 .wordpress-preview blockquote {
   border-left: 3px solid hsl(var(--primary));
   padding-left: 1rem;
   margin: 1rem 0;
   color: hsl(var(--muted-foreground));
   font-style: italic;
+  text-align: left;
 }
-.wordpress-preview ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 0.75rem; }
-.wordpress-preview ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 0.75rem; }
-.wordpress-preview pre { background: hsl(var(--muted)); border-radius: 0.5rem; padding: 1rem; overflow-x: auto; }
+.wordpress-preview ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 0.75rem; text-align: left; }
+.wordpress-preview ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 0.75rem; text-align: left; }
+.wordpress-preview pre { background: hsl(var(--muted)); border-radius: 0.5rem; padding: 1rem; overflow-x: auto; text-align: left; }
 .wordpress-preview code { background: hsl(var(--muted)); padding: 0.15rem 0.4rem; border-radius: 0.25rem; font-family: monospace; }
