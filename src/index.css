@@ -156,6 +156,29 @@
     box-shadow: var(--shadow-glow);
   }
 
+  /* Play button pulse animation on hover */
+  .movie-card .play-btn-animated {
+    @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+           w-12 h-12 sm:w-14 sm:h-14 rounded-full
+           bg-primary/95 flex items-center justify-center
+           opacity-0 scale-75
+           transition-all duration-300 shadow-lg z-10;
+  }
+
+  .movie-card:hover .play-btn-animated {
+    @apply opacity-100 scale-100;
+    animation: play-pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes play-pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 hsl(var(--primary) / 0.5);
+    }
+    50% {
+      box-shadow: 0 0 0 12px hsl(var(--primary) / 0);
+    }
+  }
+
   .movie-card-overlay {
     @apply absolute inset-0 flex flex-col justify-end p-3;
     background: var(--gradient-card);
