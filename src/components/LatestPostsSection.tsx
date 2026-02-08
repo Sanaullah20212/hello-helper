@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useLatestPosts } from "@/hooks/usePosts";
-import { ArrowRight, FileText } from "lucide-react";
+import { ArrowRight, FileText, Play, Calendar } from "lucide-react";
 import LazyImage from "@/components/ui/LazyImage";
 
 /** Extract the first <img> src from HTML content */
@@ -20,9 +20,12 @@ const LatestPostsSection = () => {
           <div className="h-7 w-48 bg-muted rounded animate-pulse mb-6" />
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="animate-pulse">
-                <div className="h-4 bg-muted rounded w-3/4 mb-2" />
-                <div className="aspect-[3/4] bg-muted rounded-lg" />
+              <div key={i} className="animate-pulse rounded-xl overflow-hidden border border-border/30">
+                <div className="aspect-[3/4] bg-muted" />
+                <div className="p-3 space-y-2 bg-card">
+                  <div className="h-4 bg-muted rounded w-3/4" />
+                  <div className="h-3 bg-muted rounded w-1/2" />
+                </div>
               </div>
             ))}
           </div>
@@ -51,7 +54,7 @@ const LatestPostsSection = () => {
           </Link>
         </div>
 
-        {/* Posts Grid - Vertical Cards like show cards */}
+        {/* Posts Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
           {posts.map((post) => {
             const imageUrl = post.featured_image_url || extractFirstImage(post.content);
@@ -60,15 +63,10 @@ const LatestPostsSection = () => {
               <Link
                 key={post.id}
                 to={`/post/${post.slug}`}
-                className="group block"
+                className="group block rounded-xl overflow-hidden border border-primary/30 hover:border-primary/60 bg-card transition-all duration-300 hover:shadow-lg hover:shadow-primary/10"
               >
-                {/* Title above card */}
-                <h3 className="font-semibold text-foreground text-xs sm:text-sm line-clamp-1 mb-1.5 group-hover:text-primary transition-colors">
-                  {post.title}
-                </h3>
-
-                {/* Card Image */}
-                <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-card border border-border/30 group-hover:border-primary/40 transition-all duration-300">
+                {/* Image Area */}
+                <div className="relative aspect-[3/4] overflow-hidden bg-secondary">
                   {imageUrl ? (
                     <LazyImage
                       src={imageUrl}
@@ -76,18 +74,38 @@ const LatestPostsSection = () => {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-secondary">
+                    <div className="w-full h-full flex items-center justify-center">
                       <FileText className="w-10 h-10 text-muted-foreground/30" />
                     </div>
                   )}
 
-                  {/* NEW POST Badge */}
-                  <div className="absolute top-2 right-2 bg-primary text-primary-foreground text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded">
-                    NEW POST
+                  {/* Badge */}
+                  <div className="absolute top-2 left-2 bg-primary text-primary-foreground text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">
+                    New Post
                   </div>
 
-                  {/* Bottom gradient for readability */}
-                  <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent" />
+                  {/* Play Button Center */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/80 backdrop-blur-sm flex items-center justify-center group-hover:bg-primary group-hover:scale-110 transition-all duration-300 shadow-lg">
+                      <Play className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground fill-primary-foreground ml-0.5" />
+                    </div>
+                  </div>
+
+                  {/* Bottom Gradient */}
+                  <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-card to-transparent" />
+                </div>
+
+                {/* Info Area Below Image */}
+                <div className="p-2.5 sm:p-3">
+                  <h3 className="font-semibold text-foreground text-xs sm:text-sm line-clamp-2 group-hover:text-primary transition-colors leading-snug">
+                    {post.title}
+                  </h3>
+                  <div className="flex items-center gap-1 text-[10px] sm:text-xs text-muted-foreground mt-1.5">
+                    <Calendar className="w-3 h-3" />
+                    {new Date(post.created_at).toLocaleDateString("en-US", {
+                      year: "numeric",
+                    })}
+                  </div>
                 </div>
               </Link>
             );
