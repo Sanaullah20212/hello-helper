@@ -49,10 +49,10 @@ function parseWXR(xmlString: string): { categories: WPCategory[]; posts: WPPost[
     throw new Error("Invalid XML file. Please upload a valid WordPress export file.");
   }
 
-  const categories: WPCategory[] = [];
+  const categorySet = new Map<string, WPCategory>(); // slug -> category
   const posts: WPPost[] = [];
 
-  // Extract categories from wp:category elements
+  // Extract categories from wp:category elements (global definitions)
   const wpCategories = doc.querySelectorAll("channel > *");
   wpCategories.forEach((node) => {
     if (node.nodeName === "wp:category") {
@@ -61,9 +61,10 @@ function parseWXR(xmlString: string): { categories: WPCategory[]; posts: WPPost[
       const slug = node.querySelector("category_nicename")?.textContent ||
         getWPCData(node, "wp:category_nicename") || "";
       if (name) {
-        categories.push({
+        const finalSlug = slug || slugify(name);
+        categorySet.set(finalSlug, {
           name: decodeHTMLEntities(name),
-          slug: slug || slugify(name),
+          slug: finalSlug,
           description: "",
           selected: true,
         });
@@ -89,9 +90,23 @@ function parseWXR(xmlString: string): { categories: WPCategory[]; posts: WPPost[
     const postTags: string[] = [];
     item.querySelectorAll("category").forEach((cat) => {
       const domain = cat.getAttribute("domain");
+      const nicename = cat.getAttribute("nicename") || "";
       const text = cat.textContent || "";
-      if (domain === "category") postCategories.push(text);
-      else if (domain === "post_tag") postTags.push(text);
+      if (domain === "category" && text) {
+        postCategories.push(text);
+        // Also collect as a category if not already found globally
+        const catSlug = nicename || slugify(text);
+        if (!categorySet.has(catSlug)) {
+          categorySet.set(catSlug, {
+            name: decodeHTMLEntities(text),
+            slug: catSlug,
+            description: "",
+            selected: true,
+          });
+        }
+      } else if (domain === "post_tag") {
+        postTags.push(text);
+      }
     });
 
     // Extract featured image from wp:postmeta or content
@@ -129,6 +144,8 @@ function parseWXR(xmlString: string): { categories: WPCategory[]; posts: WPPost[
     });
   });
 
+  const categories = Array.from(categorySet.values());
+  console.log("[WP Import] Categories extracted from posts:", categories.map(c => c.name));
   return { categories, posts };
 }
 
