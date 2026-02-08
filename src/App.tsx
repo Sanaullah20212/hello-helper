@@ -15,6 +15,7 @@ import FreeEpisodesPage from "./pages/FreeEpisodesPage";
 import NotFound from "./pages/NotFound";
 import AdminAuth from "./pages/AdminAuth";
 import AdminPanel from "./pages/AdminPanel";
+import PostPage from "./pages/PostPage";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/show/:slug" element={<ShowPage />} />
             <Route path="/watch/:showSlug/:episodeSlug" element={<PlayerPage />} />
+            <Route path="/post/:slug" element={<PostPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
