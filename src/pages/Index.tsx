@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import HeroSlider from "@/components/HeroSlider";
-import CategoryCarousel from "@/components/CategoryCarousel";
+
 import CategoryBadges from "@/components/CategoryBadges";
 import LatestPostsSection from "@/components/LatestPostsSection";
 import ContentSections from "@/components/ContentSections";
@@ -38,11 +38,6 @@ const Index = () => {
         canonical="https://www.btspro24.com"
       />
       
-      <Header />
-      <HeroSlider />
-      
-      {/* Category Carousel - Circular channel logos */}
-      <CategoryCarousel />
       
       {/* Ad Slot after Hero */}
       <div className="max-w-7xl mx-auto px-4">
