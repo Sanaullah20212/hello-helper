@@ -48,16 +48,16 @@ const LatestPostsSection = () => {
           </Link>
         </div>
 
-        {/* Posts Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Posts Grid - Vertical Cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
           {posts.map((post) => (
             <Link
               key={post.id}
               to={`/post/${post.slug}`}
-              className="group bg-card border border-border/50 rounded-xl overflow-hidden hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5"
+              className="group relative rounded-lg overflow-hidden bg-card border border-border/30 hover:border-primary/40 transition-all duration-300"
             >
-              {/* Thumbnail */}
-              <div className="relative h-44 overflow-hidden bg-muted">
+              {/* Vertical Image */}
+              <div className="relative aspect-[3/4] overflow-hidden">
                 {post.featured_image_url ? (
                   <LazyImage
                     src={post.featured_image_url}
@@ -66,30 +66,33 @@ const LatestPostsSection = () => {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-secondary">
-                    <FileText className="w-12 h-12 text-muted-foreground/30" />
+                    <FileText className="w-10 h-10 text-muted-foreground/30" />
                   </div>
                 )}
-              </div>
-
-              {/* Content */}
-              <div className="p-4 space-y-2">
-                <h3 className="font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
-                  {post.title}
-                </h3>
-                {post.excerpt && (
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {post.excerpt}
-                  </p>
-                )}
-                <div className="flex items-center gap-4 text-xs text-muted-foreground pt-1">
-                  <span className="flex items-center gap-1">
-                    <Calendar className="w-3 h-3" />
-                    {new Date(post.created_at).toLocaleDateString("bn-BD")}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Eye className="w-3 h-3" />
-                    {post.view_count} ভিউ
-                  </span>
+                
+                {/* NEW POST Badge */}
+                <div className="absolute top-2 right-2 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded">
+                  NEW POST
+                </div>
+                
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                
+                {/* Title Overlay */}
+                <div className="absolute bottom-0 left-0 right-0 p-3">
+                  <h3 className="font-semibold text-white text-sm line-clamp-2 group-hover:text-primary transition-colors">
+                    {post.title}
+                  </h3>
+                  <div className="flex items-center gap-2 text-[10px] text-gray-300 mt-1">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      {new Date(post.created_at).toLocaleDateString("bn-BD")}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Eye className="w-3 h-3" />
+                      {post.view_count}
+                    </span>
+                  </div>
                 </div>
               </div>
             </Link>
