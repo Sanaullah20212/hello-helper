@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Save, LogOut, Settings, Crown, Bell, ExternalLink, ImageIcon, Upload, X, Film, LayoutGrid, Play, FileUp, Image, Clock, Megaphone, Folder, BarChart3, FileEdit } from "lucide-react";
+import { Save, LogOut, Settings, Crown, Bell, ExternalLink, ImageIcon, Upload, X, Film, LayoutGrid, Play, FileUp, Image, Clock, Megaphone, Folder, BarChart3, FileEdit, FileDown } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import defaultLogo from "@/assets/logo.png";
 import ShowManagement from "@/components/admin/ShowManagement";
@@ -21,6 +21,7 @@ import AdsManagement from "@/components/admin/AdsManagement";
 import CategoryManagement from "@/components/admin/CategoryManagement";
 import AnalyticsDashboard from "@/components/admin/AnalyticsDashboard";
 import PostManagement from "@/components/admin/PostManagement";
+import WordPressImport from "@/components/admin/WordPressImport";
 
 const AdminPanel = () => {
   const { user, isAdmin, adminChecked, loading, signOut } = useAuth();
@@ -155,7 +156,7 @@ const AdminPanel = () => {
 
       <main className="max-w-5xl mx-auto px-4 py-8">
         <Tabs defaultValue="analytics" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-10">
+          <TabsList className="grid w-full grid-cols-11">
             <TabsTrigger value="analytics" className="flex items-center gap-2">
               <BarChart3 className="w-4 h-4" />
               <span className="hidden sm:inline">অ্যানালিটিক্স</span>
@@ -191,6 +192,14 @@ const AdminPanel = () => {
             <TabsTrigger value="ads" className="flex items-center gap-2">
               <Megaphone className="w-4 h-4" />
               <span className="hidden sm:inline">বিজ্ঞাপন</span>
+            </TabsTrigger>
+            <TabsTrigger value="wp-import" className="flex items-center gap-2">
+              <FileDown className="w-4 h-4" />
+              <span className="hidden sm:inline">ইম্পোর্ট</span>
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="flex items-center gap-2">
+              <Settings className="w-4 h-4" />
+              <span className="hidden sm:inline">সেটিংস</span>
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="w-4 h-4" />
@@ -233,6 +242,10 @@ const AdminPanel = () => {
 
           <TabsContent value="ads">
             <AdsManagement />
+          </TabsContent>
+
+          <TabsContent value="wp-import">
+            <WordPressImport />
           </TabsContent>
 
           <TabsContent value="settings" className="space-y-8">
