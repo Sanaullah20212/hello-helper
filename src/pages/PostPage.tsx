@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import PageTracker from "@/components/PageTracker";
 import LazyImage from "@/components/ui/LazyImage";
-import { Calendar, ArrowLeft, FolderOpen, FileText } from "lucide-react";
+import { Calendar, ArrowLeft, FolderOpen, FileText, User, Clock, Eye, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const PostPage = () => {
@@ -14,23 +14,24 @@ const PostPage = () => {
   const { data: relatedPosts } = useRelatedPosts(
     post?.category_id || null,
     post?.id || "",
-    4
+    6
   );
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <main className="max-w-4xl mx-auto px-4 py-8">
+        <main className="max-w-[900px] mx-auto px-4 py-8">
           <div className="animate-pulse space-y-6">
             <div className="h-4 bg-muted rounded w-32" />
-            <div className="h-10 bg-muted rounded w-3/4 mx-auto" />
-            <div className="h-5 bg-muted rounded w-48 mx-auto" />
-            <div className="h-[400px] bg-muted rounded-xl max-w-lg mx-auto" />
-            <div className="space-y-3 mt-8">
-              <div className="h-4 bg-muted rounded w-full" />
-              <div className="h-4 bg-muted rounded w-5/6" />
-              <div className="h-4 bg-muted rounded w-4/6" />
+            <div className="bg-card rounded-lg p-6 space-y-4">
+              <div className="h-8 bg-muted rounded w-3/4 mx-auto" />
+              <div className="h-4 bg-muted rounded w-48 mx-auto" />
+              <div className="space-y-3 mt-8">
+                <div className="h-4 bg-muted rounded w-full" />
+                <div className="h-4 bg-muted rounded w-5/6" />
+                <div className="h-4 bg-muted rounded w-4/6" />
+              </div>
             </div>
           </div>
         </main>
@@ -43,7 +44,7 @@ const PostPage = () => {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <main className="max-w-4xl mx-auto px-4 py-16 text-center">
+        <main className="max-w-[900px] mx-auto px-4 py-16 text-center">
           <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground/30" />
           <h1 className="text-2xl font-bold text-foreground mb-2">পোস্ট পাওয়া যায়নি</h1>
           <p className="text-muted-foreground mb-6">
@@ -60,6 +61,18 @@ const PostPage = () => {
       </div>
     );
   }
+
+  const timeAgo = (() => {
+    const diff = Date.now() - new Date(post.created_at).getTime();
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    if (days === 0) return "আজ";
+    if (days === 1) return "গতকাল";
+    if (days < 30) return `${days} দিন আগে`;
+    const months = Math.floor(days / 30);
+    if (months < 12) return `${months} মাস আগে`;
+    const years = Math.floor(months / 12);
+    return `${years} বছর আগে`;
+  })();
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -88,55 +101,43 @@ const PostPage = () => {
 
       <Header />
 
-      <main className="max-w-4xl mx-auto px-4 py-6 sm:py-8">
-        {/* Back Link */}
-        <Link
-          to="/"
-          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary mb-8 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Home
-        </Link>
+      <main className="single-post-container max-w-[900px] mx-auto px-3 sm:px-4 py-6 sm:py-8">
+        {/* Post Article Card - White background like WP theme */}
+        <article className="post-article-card">
+          {/* Header */}
+          <div className="text-center mb-6">
+            <h1 className="post-article-title text-lg sm:text-xl md:text-2xl font-bold leading-tight mb-4">
+              {post.title}
+            </h1>
 
-        <article>
-          {/* Centered Title */}
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground text-center mb-4 leading-tight">
-            {post.title}
-          </h1>
-
-          {/* Centered Meta: Date + Category */}
-          <div className="flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground mb-8">
-            <span className="flex items-center gap-1.5">
-              <Calendar className="w-4 h-4" />
-              {new Date(post.created_at).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </span>
-            {post.tags && post.tags.length > 0 && (
-              <>
-                <span className="text-border">•</span>
-                <span className="flex items-center gap-1.5">
+            {/* Meta row */}
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-sm text-gray-500">
+              <span className="inline-flex items-center gap-1.5">
+                <User className="w-4 h-4" />
+                BTSPRO24
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Clock className="w-4 h-4" />
+                {timeAgo}
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Eye className="w-4 h-4" />
+                {post.view_count || 0} Views
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <MessageCircle className="w-4 h-4" />
+                No Comments
+              </span>
+              {post.tags && post.tags.length > 0 && (
+                <span className="inline-flex items-center gap-1.5">
                   <FolderOpen className="w-4 h-4" />
-                  {post.tags[0]}
+                  <span className="text-blue-500">{post.tags[0]}</span>
+                  <span>•</span>
+                  <span>Bengalitvserial24.Com</span>
                 </span>
-              </>
-            )}
-          </div>
-
-          {/* Featured Image - Centered & Large */}
-          {post.featured_image_url && (
-            <div className="flex justify-center mb-8">
-              <div className="rounded-xl overflow-hidden border border-border/50 max-w-lg w-full">
-                <LazyImage
-                  src={post.featured_image_url}
-                  alt={post.title}
-                  className="w-full h-auto object-cover"
-                />
-              </div>
+              )}
             </div>
-          )}
+          </div>
 
           {/* Content */}
           <div
@@ -145,46 +146,59 @@ const PostPage = () => {
           />
         </article>
 
-        {/* Related Posts */}
+        {/* Related Posts - WP style white cards */}
         {relatedPosts && relatedPosts.length > 0 && (
-          <section className="mt-12 pt-8 border-t border-border/50">
-            <h2 className="text-xl font-bold text-foreground mb-6">
-              Related Posts
-            </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
-              {relatedPosts.map((rp) => (
-                <Link
-                  key={rp.id}
-                  to={`/${rp.slug}`}
-                  className="group block"
-                >
-                  <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-card border border-border/30 group-hover:border-primary/40 transition-all duration-300">
-                    {rp.featured_image_url ? (
-                      <LazyImage
-                        src={rp.featured_image_url}
-                        alt={rp.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-secondary">
-                        <FileText className="w-8 h-8 text-muted-foreground/30" />
-                      </div>
-                    )}
-                    {/* Gradient */}
-                    <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                    {/* Title */}
-                    <div className="absolute bottom-0 left-0 right-0 p-2.5">
-                      <h3 className="font-semibold text-white text-xs sm:text-sm line-clamp-2 group-hover:text-primary transition-colors">
-                        {rp.title}
-                      </h3>
-                      <span className="text-[10px] text-gray-300 mt-1 flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        {new Date(rp.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                      </span>
+          <section className="mt-8">
+            <div className="widget-title-bar mb-5">
+              <span className="inline-block bg-card px-4 py-2 font-bold text-foreground border-l-4 border-primary text-base">
+                Movies You May Also Like
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+              {relatedPosts.map((rp) => {
+                const rpTimeAgo = (() => {
+                  const diff = Date.now() - new Date(rp.created_at).getTime();
+                  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                  if (days === 0) return "আজ";
+                  if (days === 1) return "গতকাল";
+                  if (days < 30) return `${days} দিন আগে`;
+                  const months = Math.floor(days / 30);
+                  if (months < 12) return `${months} মাস আগে`;
+                  return `${Math.floor(months / 12)} বছর আগে`;
+                })();
+
+                return (
+                  <Link
+                    key={rp.id}
+                    to={`/${rp.slug}`}
+                    className="related-post-card group"
+                  >
+                    <div className="related-post-thumb">
+                      {rp.featured_image_url ? (
+                        <LazyImage
+                          src={rp.featured_image_url}
+                          alt={rp.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          wrapperClassName="w-full h-full"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                          <FileText className="w-8 h-8 text-gray-300" />
+                        </div>
+                      )}
                     </div>
-                  </div>
-                </Link>
-              ))}
+                    <div className="related-post-info">
+                      <h3 className="related-post-title">{rp.title}</h3>
+                      <hr className="border-gray-200 my-2" />
+                      <div className="related-post-meta">
+                        <Clock className="w-3 h-3" />
+                        <span>{rpTimeAgo}</span>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </section>
         )}
