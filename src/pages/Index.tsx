@@ -38,6 +38,8 @@ const Index = () => {
         canonical="https://www.btspro24.com"
       />
       
+      <Header />
+      <HeroSlider />
       
       {/* Ad Slot after Hero */}
       <div className="max-w-7xl mx-auto px-4">
