@@ -137,7 +137,7 @@ const AdminPanel = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="bg-card border-b border-border sticky top-0 z-50">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-full mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Settings className="w-6 h-6 text-primary" />
             <h1 className="text-xl font-bold text-foreground">Admin Panel</h1>
@@ -154,58 +154,57 @@ const AdminPanel = () => {
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-8">
-        <Tabs defaultValue="analytics" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-11">
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
-              <BarChart3 className="w-4 h-4" />
-              <span className="hidden sm:inline">অ্যানালিটিক্স</span>
-            </TabsTrigger>
-            <TabsTrigger value="content" className="flex items-center gap-2">
-              <Film className="w-4 h-4" />
-              <span className="hidden sm:inline">শো</span>
-            </TabsTrigger>
-            <TabsTrigger value="episodes" className="flex items-center gap-2">
-              <Play className="w-4 h-4" />
-              <span className="hidden sm:inline">এপিসোড</span>
-            </TabsTrigger>
-            <TabsTrigger value="bulk" className="flex items-center gap-2">
-              <FileUp className="w-4 h-4" />
-              <span className="hidden sm:inline">বাল্ক</span>
-            </TabsTrigger>
-            <TabsTrigger value="posts" className="flex items-center gap-2">
-              <FileEdit className="w-4 h-4" />
-              <span className="hidden sm:inline">পোস্ট</span>
-            </TabsTrigger>
-            <TabsTrigger value="slider" className="flex items-center gap-2">
-              <Image className="w-4 h-4" />
-              <span className="hidden sm:inline">স্লাইডার</span>
-            </TabsTrigger>
-            <TabsTrigger value="sections" className="flex items-center gap-2">
-              <LayoutGrid className="w-4 h-4" />
-              <span className="hidden sm:inline">সেকশন</span>
-            </TabsTrigger>
-            <TabsTrigger value="categories" className="flex items-center gap-2">
-              <Folder className="w-4 h-4" />
-              <span className="hidden sm:inline">ক্যাটাগরি</span>
-            </TabsTrigger>
-            <TabsTrigger value="ads" className="flex items-center gap-2">
-              <Megaphone className="w-4 h-4" />
-              <span className="hidden sm:inline">বিজ্ঞাপন</span>
-            </TabsTrigger>
-            <TabsTrigger value="wp-import" className="flex items-center gap-2">
-              <FileDown className="w-4 h-4" />
-              <span className="hidden sm:inline">ইম্পোর্ট</span>
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="flex items-center gap-2">
-              <Settings className="w-4 h-4" />
-              <span className="hidden sm:inline">সেটিংস</span>
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="flex items-center gap-2">
-              <Settings className="w-4 h-4" />
-              <span className="hidden sm:inline">সেটিংস</span>
-            </TabsTrigger>
-          </TabsList>
+      <Tabs defaultValue="analytics" orientation="vertical" className="flex min-h-[calc(100vh-57px)]">
+        {/* Sidebar */}
+        <TabsList className="flex flex-col h-auto items-stretch gap-1 rounded-none border-r border-border bg-card p-2 w-[200px] shrink-0 justify-start">
+          <TabsTrigger value="analytics" className="justify-start gap-2 px-3 py-2.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+            <BarChart3 className="w-4 h-4" />
+            অ্যানালিটিক্স
+          </TabsTrigger>
+          <TabsTrigger value="content" className="justify-start gap-2 px-3 py-2.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+            <Film className="w-4 h-4" />
+            শো
+          </TabsTrigger>
+          <TabsTrigger value="episodes" className="justify-start gap-2 px-3 py-2.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+            <Play className="w-4 h-4" />
+            এপিসোড
+          </TabsTrigger>
+          <TabsTrigger value="bulk" className="justify-start gap-2 px-3 py-2.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+            <FileUp className="w-4 h-4" />
+            বাল্ক
+          </TabsTrigger>
+          <TabsTrigger value="posts" className="justify-start gap-2 px-3 py-2.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+            <FileEdit className="w-4 h-4" />
+            পোস্ট
+          </TabsTrigger>
+          <TabsTrigger value="slider" className="justify-start gap-2 px-3 py-2.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+            <Image className="w-4 h-4" />
+            স্লাইডার
+          </TabsTrigger>
+          <TabsTrigger value="sections" className="justify-start gap-2 px-3 py-2.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+            <LayoutGrid className="w-4 h-4" />
+            সেকশন
+          </TabsTrigger>
+          <TabsTrigger value="categories" className="justify-start gap-2 px-3 py-2.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+            <Folder className="w-4 h-4" />
+            ক্যাটাগরি
+          </TabsTrigger>
+          <TabsTrigger value="ads" className="justify-start gap-2 px-3 py-2.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+            <Megaphone className="w-4 h-4" />
+            বিজ্ঞাপন
+          </TabsTrigger>
+          <TabsTrigger value="wp-import" className="justify-start gap-2 px-3 py-2.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+            <FileDown className="w-4 h-4" />
+            ইম্পোর্ট
+          </TabsTrigger>
+          <TabsTrigger value="settings" className="justify-start gap-2 px-3 py-2.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+            <Settings className="w-4 h-4" />
+            সেটিংস
+          </TabsTrigger>
+        </TabsList>
+
+        {/* Main Content */}
+        <div className="flex-1 overflow-auto p-6">
 
           <TabsContent value="analytics">
             <AnalyticsDashboard />
@@ -437,8 +436,8 @@ const AdminPanel = () => {
               </Button>
             </div>
           </TabsContent>
-        </Tabs>
-      </main>
+        </div>
+      </Tabs>
     </div>
   );
 };
