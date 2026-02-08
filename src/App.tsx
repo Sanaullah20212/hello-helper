@@ -16,6 +16,7 @@ import NotFound from "./pages/NotFound";
 import AdminAuth from "./pages/AdminAuth";
 import AdminPanel from "./pages/AdminPanel";
 import PostPage from "./pages/PostPage";
+import PostsPage from "./pages/PostsPage";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/show/:slug" element={<ShowPage />} />
             <Route path="/watch/:showSlug/:episodeSlug" element={<PlayerPage />} />
             <Route path="/post/:slug" element={<PostPage />} />
+            <Route path="/posts" element={<PostsPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
