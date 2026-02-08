@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import HeroSlider from "@/components/HeroSlider";
 import CategoryCarousel from "@/components/CategoryCarousel";
+import CategoryBadges from "@/components/CategoryBadges";
 import LatestPostsSection from "@/components/LatestPostsSection";
 import ContentSections from "@/components/ContentSections";
 import Footer from "@/components/Footer";
@@ -47,6 +48,9 @@ const Index = () => {
       <div className="max-w-7xl mx-auto px-4">
         <BodyAd className="my-4" />
       </div>
+
+      {/* Category Badges */}
+      <CategoryBadges />
       
       {/* Latest Posts / Updates */}
       <LatestPostsSection />
