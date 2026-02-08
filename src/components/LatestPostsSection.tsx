@@ -1,7 +1,14 @@
 import { Link } from "react-router-dom";
 import { useLatestPosts } from "@/hooks/usePosts";
-import { Calendar, Eye, ArrowRight, FileText } from "lucide-react";
+import { ArrowRight, FileText } from "lucide-react";
 import LazyImage from "@/components/ui/LazyImage";
+
+/** Extract the first <img> src from HTML content */
+const extractFirstImage = (html: string | null | undefined): string | null => {
+  if (!html) return null;
+  const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
+  return match ? match[1] : null;
+};
 
 const LatestPostsSection = () => {
   const { data: posts, isLoading } = useLatestPosts(6);
@@ -11,15 +18,11 @@ const LatestPostsSection = () => {
       <section className="py-6 md:py-8">
         <div className="max-w-[1600px] mx-auto px-3 sm:px-4">
           <div className="h-7 w-48 bg-muted rounded animate-pulse mb-6" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-card rounded-xl overflow-hidden animate-pulse">
-                <div className="h-44 bg-muted" />
-                <div className="p-4 space-y-3">
-                  <div className="h-5 bg-muted rounded w-3/4" />
-                  <div className="h-4 bg-muted rounded w-full" />
-                  <div className="h-4 bg-muted rounded w-1/2" />
-                </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="animate-pulse">
+                <div className="h-4 bg-muted rounded w-3/4 mb-2" />
+                <div className="aspect-[3/4] bg-muted rounded-lg" />
               </div>
             ))}
           </div>
@@ -48,55 +51,47 @@ const LatestPostsSection = () => {
           </Link>
         </div>
 
-        {/* Posts Grid - Vertical Cards */}
+        {/* Posts Grid - Vertical Cards like show cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
-          {posts.map((post) => (
-            <Link
-              key={post.id}
-              to={`/post/${post.slug}`}
-              className="group relative rounded-lg overflow-hidden bg-card border border-border/30 hover:border-primary/40 transition-all duration-300"
-            >
-              {/* Vertical Image */}
-              <div className="relative aspect-[3/4] overflow-hidden">
-                {post.featured_image_url ? (
-                  <LazyImage
-                    src={post.featured_image_url}
-                    alt={post.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-secondary">
-                    <FileText className="w-10 h-10 text-muted-foreground/30" />
+          {posts.map((post) => {
+            const imageUrl = post.featured_image_url || extractFirstImage(post.content);
+
+            return (
+              <Link
+                key={post.id}
+                to={`/post/${post.slug}`}
+                className="group block"
+              >
+                {/* Title above card */}
+                <h3 className="font-semibold text-foreground text-xs sm:text-sm line-clamp-1 mb-1.5 group-hover:text-primary transition-colors">
+                  {post.title}
+                </h3>
+
+                {/* Card Image */}
+                <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-card border border-border/30 group-hover:border-primary/40 transition-all duration-300">
+                  {imageUrl ? (
+                    <LazyImage
+                      src={imageUrl}
+                      alt={post.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-secondary">
+                      <FileText className="w-10 h-10 text-muted-foreground/30" />
+                    </div>
+                  )}
+
+                  {/* NEW POST Badge */}
+                  <div className="absolute top-2 right-2 bg-primary text-primary-foreground text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded">
+                    NEW POST
                   </div>
-                )}
-                
-                {/* NEW POST Badge */}
-                <div className="absolute top-2 right-2 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded">
-                  NEW POST
+
+                  {/* Bottom gradient for readability */}
+                  <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent" />
                 </div>
-                
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                
-                {/* Title Overlay */}
-                <div className="absolute bottom-0 left-0 right-0 p-3">
-                  <h3 className="font-semibold text-white text-sm line-clamp-2 group-hover:text-primary transition-colors">
-                    {post.title}
-                  </h3>
-                  <div className="flex items-center gap-2 text-[10px] text-gray-300 mt-1">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
-                      {new Date(post.created_at).toLocaleDateString("bn-BD")}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Eye className="w-3 h-3" />
-                      {post.view_count}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       </div>
     </section>
