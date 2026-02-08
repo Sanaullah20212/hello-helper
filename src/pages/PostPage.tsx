@@ -82,7 +82,7 @@ const PostPage = () => {
       <SEOHead
         title={post.meta_title || `${post.title} - BTSPRO24`}
         description={post.meta_description || post.excerpt || post.title}
-        canonical={`https://www.btspro24.com/post/${post.slug}`}
+        canonical={`https://www.btspro24.com/${post.slug}`}
         jsonLd={jsonLd}
       />
 
@@ -155,7 +155,7 @@ const PostPage = () => {
               {relatedPosts.map((rp) => (
                 <Link
                   key={rp.id}
-                  to={`/post/${rp.slug}`}
+                  to={`/${rp.slug}`}
                   className="group block"
                 >
                   <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-card border border-border/30 group-hover:border-primary/40 transition-all duration-300">

@@ -62,7 +62,7 @@ const LatestPostsSection = () => {
             return (
               <Link
                 key={post.id}
-                to={`/post/${post.slug}`}
+                to={`/${post.slug}`}
                 className={`relative flex-shrink-0 group/card rounded-lg overflow-hidden transition-transform duration-300 hover:scale-105 hover:z-10 w-[130px] sm:w-[160px] md:w-[180px] lg:w-[200px] aspect-[2/3]`}
               >
                 {/* Image */}

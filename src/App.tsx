@@ -39,8 +39,8 @@ const App = () => (
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/show/:slug" element={<ShowPage />} />
             <Route path="/watch/:showSlug/:episodeSlug" element={<PlayerPage />} />
-            <Route path="/post/:slug" element={<PostPage />} />
             <Route path="/posts" element={<PostsPage />} />
+            <Route path="/:slug" element={<PostPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
