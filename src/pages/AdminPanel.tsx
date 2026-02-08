@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Save, LogOut, Settings, Crown, Bell, ExternalLink, ImageIcon, Upload, X, Film, LayoutGrid, Play, FileUp, Image, Clock, Megaphone, Folder, BarChart3, HardDrive } from "lucide-react";
+import { Save, LogOut, Settings, Crown, Bell, ExternalLink, ImageIcon, Upload, X, Film, LayoutGrid, Play, FileUp, Image, Clock, Megaphone, Folder, BarChart3, FileEdit } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import defaultLogo from "@/assets/logo.png";
 import ShowManagement from "@/components/admin/ShowManagement";
@@ -20,7 +20,7 @@ import SliderManagement from "@/components/admin/SliderManagement";
 import AdsManagement from "@/components/admin/AdsManagement";
 import CategoryManagement from "@/components/admin/CategoryManagement";
 import AnalyticsDashboard from "@/components/admin/AnalyticsDashboard";
-import DriveSyncManagement from "@/components/admin/DriveSyncManagement";
+import PostManagement from "@/components/admin/PostManagement";
 
 const AdminPanel = () => {
   const { user, isAdmin, adminChecked, loading, signOut } = useAuth();
@@ -172,9 +172,9 @@ const AdminPanel = () => {
               <FileUp className="w-4 h-4" />
               <span className="hidden sm:inline">বাল্ক</span>
             </TabsTrigger>
-            <TabsTrigger value="drive-sync" className="flex items-center gap-2">
-              <HardDrive className="w-4 h-4" />
-              <span className="hidden sm:inline">Drive</span>
+            <TabsTrigger value="posts" className="flex items-center gap-2">
+              <FileEdit className="w-4 h-4" />
+              <span className="hidden sm:inline">পোস্ট</span>
             </TabsTrigger>
             <TabsTrigger value="slider" className="flex items-center gap-2">
               <Image className="w-4 h-4" />
@@ -214,8 +214,8 @@ const AdminPanel = () => {
             <BulkImport />
           </TabsContent>
 
-          <TabsContent value="drive-sync">
-            <DriveSyncManagement />
+          <TabsContent value="posts">
+            <PostManagement />
           </TabsContent>
 
 
