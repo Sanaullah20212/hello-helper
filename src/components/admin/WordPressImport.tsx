@@ -202,6 +202,7 @@ const WordPressImport = () => {
   const [importProgress, setImportProgress] = useState(0);
   const [importStatus, setImportStatus] = useState("");
   const [skipExisting, setSkipExisting] = useState(true);
+  const [updateExistingCategories, setUpdateExistingCategories] = useState(true);
   const [importStep, setImportStep] = useState<"upload" | "preview" | "importing" | "done">("upload");
 
   // Fetch existing categories
@@ -216,13 +217,13 @@ const WordPressImport = () => {
     },
   });
 
-  // Fetch existing post slugs
+  // Fetch existing post slugs with IDs
   const { data: existingPosts } = useQuery({
     queryKey: ["existing-post-slugs"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("posts")
-        .select("id, slug");
+        .select("id, slug, category_id");
       if (error) throw error;
       return data;
     },
@@ -339,10 +340,13 @@ const WordPressImport = () => {
 
       // Step 2: Import posts
       const selectedPosts = parsedPosts.filter((p) => p.selected);
-      const existingSlugs = new Set(existingPosts?.map((p) => p.slug) || []);
+      const existingSlugMap = new Map(
+        (existingPosts || []).map((p) => [p.slug, { id: p.id, category_id: p.category_id }])
+      );
 
       let importedCount = 0;
       let skippedCount = 0;
+      let categoryUpdatedCount = 0;
 
       setImportStatus(`${selectedPosts.length}টি পোস্ট ইম্পোর্ট হচ্ছে...`);
 
@@ -353,15 +357,31 @@ const WordPressImport = () => {
         const postsToInsert = [];
 
         for (const post of batch) {
-          // Skip existing if option enabled
-          if (skipExisting && existingSlugs.has(post.slug)) {
+          const existing = existingSlugMap.get(post.slug);
+
+          // If post exists and skip is enabled
+          if (skipExisting && existing) {
+            // Update category for existing posts if option enabled
+            if (updateExistingCategories && !existing.category_id) {
+              const categoryId = post.categories.length > 0
+                ? categoryMap[post.categories[0]] || null
+                : null;
+
+              if (categoryId) {
+                const { error } = await supabase
+                  .from("posts")
+                  .update({ category_id: categoryId })
+                  .eq("id", existing.id);
+                if (!error) categoryUpdatedCount++;
+              }
+            }
             skippedCount++;
             continue;
           }
 
           // Make slug unique if it exists
           let finalSlug = post.slug;
-          if (existingSlugs.has(finalSlug)) {
+          if (existingSlugMap.has(finalSlug)) {
             finalSlug = `${finalSlug}-${Date.now()}`;
           }
 
@@ -384,7 +404,7 @@ const WordPressImport = () => {
             meta_description: post.metaDescription || null,
           });
 
-          existingSlugs.add(finalSlug);
+          existingSlugMap.set(finalSlug, { id: "", category_id: categoryId });
         }
 
         if (postsToInsert.length > 0) {
@@ -409,9 +429,11 @@ const WordPressImport = () => {
       queryClient.invalidateQueries({ queryKey: ["existing-post-slugs"] });
       queryClient.invalidateQueries({ queryKey: ["content-categories-import"] });
 
-      toast.success(
-        `✅ ${importedCount}টি পোস্ট ইম্পোর্ট হয়েছে${skippedCount > 0 ? `, ${skippedCount}টি স্কিপ হয়েছে` : ""}`
-      );
+      const parts = [];
+      if (importedCount > 0) parts.push(`${importedCount}টি নতুন পোস্ট`);
+      if (categoryUpdatedCount > 0) parts.push(`${categoryUpdatedCount}টি পোস্টের ক্যাটাগরি আপডেট`);
+      if (skippedCount > 0) parts.push(`${skippedCount}টি স্কিপ`);
+      toast.success(`✅ ${parts.join(", ")}`);
     } catch (err: any) {
       toast.error(err.message || "ইম্পোর্ট এরর");
       setImportStep("preview");
@@ -540,7 +562,7 @@ const WordPressImport = () => {
                 <FileText className="w-4 h-4 text-primary" />
                 পোস্ট ({parsedPosts.length}টি)
               </h3>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-wrap">
                 <div className="flex items-center gap-2">
                   <Switch
                     id="skip-existing"
@@ -549,6 +571,16 @@ const WordPressImport = () => {
                   />
                   <Label htmlFor="skip-existing" className="text-sm cursor-pointer">
                     ডুপ্লিকেট স্কিপ
+                  </Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch
+                    id="update-categories"
+                    checked={updateExistingCategories}
+                    onCheckedChange={setUpdateExistingCategories}
+                  />
+                  <Label htmlFor="update-categories" className="text-sm cursor-pointer">
+                    ক্যাটাগরি আপডেট করো
                   </Label>
                 </div>
                 <Button
