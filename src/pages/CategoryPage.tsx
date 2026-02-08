@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import LazyImage from "@/components/ui/LazyImage";
 import { BodyAd, InArticleAd } from "@/components/AdManager";
-import { Folder, Film, Play } from "lucide-react";
+import { Folder, Film, Play, FileText, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PageTracker from "@/components/PageTracker";
 
@@ -31,6 +31,23 @@ interface ContentSection {
   title: string;
   slug: string;
 }
+
+interface Post {
+  id: string;
+  title: string;
+  slug: string;
+  featured_image_url: string | null;
+  content: string | null;
+  created_at: string;
+  tags: string[] | null;
+}
+
+/** Extract the first <img> src from HTML content */
+const extractFirstImage = (html: string | null | undefined): string | null => {
+  if (!html) return null;
+  const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
+  return match ? match[1] : null;
+};
 
 const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -88,11 +105,26 @@ const CategoryPage = () => {
     enabled: !!category?.id && !isSection,
   });
 
+  // Fetch posts in category
+  const { data: categoryPosts, isLoading: postsLoading } = useQuery({
+    queryKey: ["category-posts", category?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("posts")
+        .select("id, title, slug, featured_image_url, content, created_at, tags")
+        .eq("category_id", category!.id)
+        .eq("status", "published")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as Post[];
+    },
+    enabled: !!category?.id && !isSection,
+  });
+
   // Fetch shows in section
   const { data: sectionShows, isLoading: sectionLoading } = useQuery({
     queryKey: ["section-shows", section?.id],
     queryFn: async () => {
-      // Get show IDs from section_shows table
       const { data: sectionShowsData, error: sectionShowsError } = await supabase
         .from("section_shows")
         .select("show_id, display_order")
@@ -104,7 +136,6 @@ const CategoryPage = () => {
 
       const showIds = sectionShowsData.map(ss => ss.show_id);
       
-      // Get shows data
       const { data: showsData, error: showsError } = await supabase
         .from("shows")
         .select("*")
@@ -113,7 +144,6 @@ const CategoryPage = () => {
 
       if (showsError) throw showsError;
 
-      // Sort by display_order from section_shows
       const orderedShows = sectionShowsData
         .map(ss => showsData?.find(s => s.id === ss.show_id))
         .filter(Boolean) as Show[];
@@ -124,7 +154,8 @@ const CategoryPage = () => {
   });
 
   const shows = isSection ? sectionShows : categoryShows;
-  const isLoading = isSection ? sectionLoading : categoryLoading;
+  const posts = isSection ? [] : (categoryPosts || []);
+  const isLoading = isSection ? sectionLoading : (categoryLoading || postsLoading);
   const isError = false;
 
   const displayName = isSection 
@@ -156,9 +187,9 @@ const CategoryPage = () => {
               <h1 className="text-xl font-semibold text-foreground">
                 {categoryName}
               </h1>
-              {shows && shows.length > 0 && (
+              {((shows && shows.length > 0) || posts.length > 0) && (
                 <span className="text-sm text-muted-foreground">
-                  ({shows.length} shows)
+                  ({(shows?.length || 0) + posts.length} টি)
                 </span>
               )}
             </div>
@@ -229,11 +260,65 @@ const CategoryPage = () => {
             </div>
           )}
 
+          {/* Posts Grid */}
+          {!isLoading && !isError && posts.length > 0 && (
+            <>
+              {shows && shows.length > 0 && (
+                <div className="section-header-line my-6">
+                  <FileText className="w-4 h-4 text-primary" />
+                  <h2 className="text-base font-semibold text-foreground whitespace-nowrap">Posts</h2>
+                </div>
+              )}
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+                {posts.map((post) => {
+                  const imageUrl = post.featured_image_url || extractFirstImage(post.content);
+                  return (
+                    <Link
+                      key={post.id}
+                      to={`/${post.slug}`}
+                      className="movie-card group aspect-[2/3]"
+                    >
+                      {imageUrl ? (
+                        <LazyImage
+                          src={imageUrl}
+                          alt={post.title}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          wrapperClassName="w-full h-full"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-secondary">
+                          <FileText className="w-10 h-10 text-muted-foreground/30" />
+                        </div>
+                      )}
+                      {post.tags && post.tags.length > 0 && (
+                        <span className="absolute top-2 left-2 z-10 px-2 py-0.5 text-[10px] sm:text-xs font-semibold bg-primary text-primary-foreground rounded-md shadow-md">
+                          {post.tags[0]}
+                        </span>
+                      )}
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-primary/95 flex items-center justify-center opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 shadow-lg z-10">
+                        <Play className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground ml-0.5" fill="currentColor" />
+                      </div>
+                      <div className="movie-card-overlay">
+                        <h3 className="text-sm font-semibold text-foreground line-clamp-2 leading-tight">
+                          {post.title}
+                        </h3>
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
+                          <Calendar className="w-3 h-3" />
+                          <span>{new Date(post.created_at).getFullYear()}</span>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </>
+          )}
+
           {/* Empty State */}
-          {!isLoading && !isError && shows?.length === 0 && (
+          {!isLoading && !isError && (shows?.length === 0) && posts.length === 0 && (
             <div className="text-center py-16 bg-card rounded-xl border border-border/30">
               <Film className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">No shows in this {isSection ? "section" : "category"}.</p>
+              <p className="text-muted-foreground">No content in this {isSection ? "section" : "category"}.</p>
             </div>
           )}
 
