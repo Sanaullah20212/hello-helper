@@ -379,6 +379,31 @@
            border-l-4 border-primary backdrop-blur-sm;
   }
 
+  /* Section header with centered text and lines on both sides */
+  .section-header-line {
+    @apply flex items-center gap-3 text-foreground;
+  }
+  .section-header-line::before,
+  .section-header-line::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: hsl(var(--border));
+  }
+
+  /* Pagination buttons */
+  .pagination-btn {
+    @apply min-w-[36px] h-9 px-2 flex items-center justify-center
+           rounded-md text-sm font-medium
+           bg-secondary/60 text-muted-foreground border border-border
+           hover:bg-primary/20 hover:text-primary hover:border-primary/40
+           disabled:opacity-30 disabled:pointer-events-none
+           transition-all duration-200;
+  }
+  .pagination-btn.active {
+    @apply bg-primary text-primary-foreground border-primary shadow-md;
+  }
+
   /* Banners */
   .banner-gradient {
     background: var(--gradient-hero);

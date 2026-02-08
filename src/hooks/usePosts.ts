@@ -5,6 +5,7 @@ export const useLatestPosts = (limit = 6) => {
   return useQuery({
     queryKey: ["latest-posts", limit],
     queryFn: async () => {
+      // Supabase limits to 1000 per request, but we fetch in one go for reasonable limits
       const { data, error } = await supabase
         .from("posts")
         .select("id, title, slug, excerpt, featured_image_url, content, created_at, view_count, tags, category_id")
@@ -15,6 +16,7 @@ export const useLatestPosts = (limit = 6) => {
       if (error) throw error;
       return data;
     },
+    staleTime: 5 * 60 * 1000, // cache for 5 minutes when fetching large sets
   });
 };
 
