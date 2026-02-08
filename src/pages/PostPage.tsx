@@ -5,8 +5,8 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import PageTracker from "@/components/PageTracker";
 import LazyImage from "@/components/ui/LazyImage";
-import { Calendar, ArrowLeft, FolderOpen, FileText, User, Clock, Eye, MessageCircle } from "lucide-react";
-import { transformPostContent } from "@/lib/transformPostContent";
+import { Calendar, ArrowLeft, FolderOpen, FileText, Image as ImageIcon, Play } from "lucide-react";
+import { parsePostContent, renderDownloadSections } from "@/lib/transformPostContent";
 import { Button } from "@/components/ui/button";
 
 const PostPage = () => {
@@ -22,17 +22,13 @@ const PostPage = () => {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <main className="max-w-[900px] mx-auto px-4 py-8">
+        <main className="max-w-[56rem] mx-auto px-4 py-8">
           <div className="animate-pulse space-y-6">
             <div className="h-4 bg-muted rounded w-32" />
-            <div className="bg-card rounded-lg p-6 space-y-4">
+            <div className="space-y-4 text-center">
               <div className="h-8 bg-muted rounded w-3/4 mx-auto" />
               <div className="h-4 bg-muted rounded w-48 mx-auto" />
-              <div className="space-y-3 mt-8">
-                <div className="h-4 bg-muted rounded w-full" />
-                <div className="h-4 bg-muted rounded w-5/6" />
-                <div className="h-4 bg-muted rounded w-4/6" />
-              </div>
+              <div className="h-80 bg-muted rounded-xl max-w-md mx-auto" />
             </div>
           </div>
         </main>
@@ -45,7 +41,7 @@ const PostPage = () => {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <main className="max-w-[900px] mx-auto px-4 py-16 text-center">
+        <main className="max-w-[56rem] mx-auto px-4 py-16 text-center">
           <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground/30" />
           <h1 className="text-2xl font-bold text-foreground mb-2">পোস্ট পাওয়া যায়নি</h1>
           <p className="text-muted-foreground mb-6">
@@ -63,24 +59,21 @@ const PostPage = () => {
     );
   }
 
-  const timeAgo = (() => {
-    const diff = Date.now() - new Date(post.created_at).getTime();
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    if (days === 0) return "আজ";
-    if (days === 1) return "গতকাল";
-    if (days < 30) return `${days} দিন আগে`;
-    const months = Math.floor(days / 30);
-    if (months < 12) return `${months} মাস আগে`;
-    const years = Math.floor(months / 12);
-    return `${years} বছর আগে`;
-  })();
+  const parsed = parsePostContent(post.content || "");
+  const downloadHtml = renderDownloadSections(parsed.downloadSections);
+
+  const formattedDate = new Date(post.created_at).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: post.title,
     description: post.meta_description || post.excerpt || "",
-    image: post.featured_image_url || undefined,
+    image: parsed.poster || post.featured_image_url || undefined,
     datePublished: post.created_at,
     dateModified: post.updated_at,
     publisher: {
@@ -102,107 +95,128 @@ const PostPage = () => {
 
       <Header />
 
-      <main className="single-post-container max-w-[900px] mx-auto px-3 sm:px-4 py-6 sm:py-8">
-        {/* Post Article Card - White background like WP theme */}
-        <article className="post-article-card">
-          {/* Header */}
-          <div className="text-center mb-6">
-            <h1 className="post-article-title text-lg sm:text-xl md:text-2xl font-bold leading-tight mb-4">
-              {post.title}
-            </h1>
+      <main className="single-post">
+        <div className="max-w-[56rem] mx-auto px-3 sm:px-4">
+          {/* Breadcrumb */}
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-6"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Home
+          </Link>
 
-            {/* Meta row */}
-            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-sm text-gray-500">
-              <span className="inline-flex items-center gap-1.5">
-                <User className="w-4 h-4" />
-                BTSPRO24
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <Clock className="w-4 h-4" />
-                {timeAgo}
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <Eye className="w-4 h-4" />
-                {post.view_count || 0} Views
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <MessageCircle className="w-4 h-4" />
-                No Comments
-              </span>
-              {post.tags && post.tags.length > 0 && (
+          <article>
+            {/* Header */}
+            <div className="text-center mb-6">
+              <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground leading-snug mb-4">
+                {post.title}
+              </h1>
+
+              <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-sm text-muted-foreground">
                 <span className="inline-flex items-center gap-1.5">
-                  <FolderOpen className="w-4 h-4" />
-                  <span className="text-blue-500">{post.tags[0]}</span>
-                  <span>•</span>
-                  <span>Bengalitvserial24.Com</span>
+                  <Calendar className="w-4 h-4 text-primary" />
+                  {formattedDate}
                 </span>
-              )}
-            </div>
-          </div>
-
-          {/* Content */}
-          <div
-            className="wordpress-preview"
-            dangerouslySetInnerHTML={{ __html: transformPostContent(post.content || "") }}
-          />
-        </article>
-
-        {/* Related Posts - WP style white cards */}
-        {relatedPosts && relatedPosts.length > 0 && (
-          <section className="mt-8">
-            <div className="widget-title-bar mb-5">
-              <span className="inline-block bg-card px-4 py-2 font-bold text-foreground border-l-4 border-primary text-base">
-                Movies You May Also Like
-              </span>
+                {post.tags && post.tags.length > 0 && (
+                  <>
+                    <span className="text-border">•</span>
+                    <span className="inline-flex items-center gap-1.5 hover:text-primary transition-colors">
+                      <FolderOpen className="w-4 h-4 text-primary" />
+                      {post.tags[0]}
+                    </span>
+                  </>
+                )}
+              </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-              {relatedPosts.map((rp) => {
-                const rpTimeAgo = (() => {
-                  const diff = Date.now() - new Date(rp.created_at).getTime();
-                  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                  if (days === 0) return "আজ";
-                  if (days === 1) return "গতকাল";
-                  if (days < 30) return `${days} দিন আগে`;
-                  const months = Math.floor(days / 30);
-                  if (months < 12) return `${months} মাস আগে`;
-                  return `${Math.floor(months / 12)} বছর আগে`;
-                })();
+            {/* Poster */}
+            {parsed.poster && (
+              <div className="post-poster">
+                <img
+                  src={parsed.poster}
+                  alt={post.title}
+                  loading="lazy"
+                />
+              </div>
+            )}
 
-                return (
-                  <Link
-                    key={rp.id}
-                    to={`/${rp.slug}`}
-                    className="related-post-card group"
-                  >
-                    <div className="related-post-thumb">
+            {/* Synopsis */}
+            {parsed.synopsis && (
+              <div className="post-synopsis">
+                <div className="synopsis-header">
+                  <FileText className="w-5 h-5" />
+                  <span>সারাংশ / Synopsis</span>
+                </div>
+                <div
+                  className="synopsis-content"
+                  dangerouslySetInnerHTML={{ __html: parsed.synopsis }}
+                />
+              </div>
+            )}
+
+            {/* Screenshots */}
+            {parsed.screenshots.length > 0 && (
+              <div className="screenshots-section">
+                <div className="screenshots-header">
+                  <ImageIcon className="w-5 h-5" />
+                  <span>স্ক্রিনশট</span>
+                </div>
+                <div className="screenshots-grid">
+                  {parsed.screenshots.map((src, i) => (
+                    <img key={i} src={src} alt={`Screenshot ${i + 1}`} loading="lazy" />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Download Sections */}
+            {downloadHtml && (
+              <div dangerouslySetInnerHTML={{ __html: downloadHtml }} />
+            )}
+
+            {/* Related Posts - Movie card style */}
+            {relatedPosts && relatedPosts.length > 0 && (
+              <div className="related-posts">
+                <div className="section-header mb-6">
+                  <Play className="w-5 h-5 text-primary" />
+                  <h2 className="text-lg font-semibold text-foreground">Related Posts</h2>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3 sm:gap-4">
+                  {relatedPosts.map((rp) => (
+                    <Link
+                      key={rp.id}
+                      to={`/${rp.slug}`}
+                      className="movie-card group"
+                    >
                       {rp.featured_image_url ? (
                         <LazyImage
                           src={rp.featured_image_url}
                           alt={rp.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                           wrapperClassName="w-full h-full"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                          <FileText className="w-8 h-8 text-gray-300" />
+                        <div className="w-full h-full flex items-center justify-center bg-card">
+                          <FileText className="w-8 h-8 text-muted-foreground/30" />
                         </div>
                       )}
-                    </div>
-                    <div className="related-post-info">
-                      <h3 className="related-post-title">{rp.title}</h3>
-                      <hr className="border-gray-200 my-2" />
-                      <div className="related-post-meta">
-                        <Clock className="w-3 h-3" />
-                        <span>{rpTimeAgo}</span>
+                      <div className="movie-card-overlay">
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 flex items-center justify-center rounded-full bg-primary/95 opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100 shadow-lg">
+                          <Play className="w-6 h-6 text-primary-foreground ml-0.5" fill="currentColor" />
+                        </div>
+                        <h3 className="text-sm font-semibold text-white line-clamp-2 leading-tight" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.5)" }}>
+                          {rp.title}
+                        </h3>
                       </div>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </section>
-        )}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </article>
+        </div>
       </main>
 
       <Footer />
