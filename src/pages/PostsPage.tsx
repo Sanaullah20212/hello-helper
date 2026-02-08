@@ -91,7 +91,7 @@ const PostsPage = () => {
               return (
                 <Link
                   key={post.id}
-                  to={`/post/${post.slug}`}
+                  to={`/${post.slug}`}
                   className="group block"
                 >
                   {/* Card */}
