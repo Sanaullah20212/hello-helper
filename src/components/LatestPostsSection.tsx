@@ -55,7 +55,7 @@ const LatestPostsSection = () => {
         </div>
 
         {/* Posts Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+        <div className="flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide scroll-smooth">
           {posts.map((post) => {
             const imageUrl = post.featured_image_url || extractFirstImage(post.content);
 
@@ -63,10 +63,10 @@ const LatestPostsSection = () => {
               <Link
                 key={post.id}
                 to={`/post/${post.slug}`}
-                className="group block rounded-xl overflow-hidden border border-primary/30 hover:border-primary/60 bg-card transition-all duration-300 hover:shadow-lg hover:shadow-primary/10"
+                className="group flex-shrink-0 w-[130px] sm:w-[160px] md:w-[180px] lg:w-[200px] block rounded-lg overflow-hidden border border-primary/30 hover:border-primary/60 bg-card transition-all duration-300 hover:scale-105"
               >
                 {/* Image Area */}
-                <div className="relative aspect-[3/4] overflow-hidden bg-secondary">
+                <div className="relative aspect-[2/3] overflow-hidden bg-secondary">
                   {imageUrl ? (
                     <LazyImage
                       src={imageUrl}
