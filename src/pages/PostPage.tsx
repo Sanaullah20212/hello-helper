@@ -90,6 +90,8 @@ const PostPage = () => {
         title={post.meta_title || `${post.title} - BTSPRO24`}
         description={post.meta_description || post.excerpt || post.title}
         canonical={`https://www.btspro24.com/${post.slug}`}
+        ogImage={parsed.poster || post.featured_image_url || undefined}
+        keywords={post.tags?.join(", ") || undefined}
         jsonLd={jsonLd}
       />
 
