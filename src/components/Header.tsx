@@ -20,12 +20,7 @@ const Header = () => {
     }
   };
 
-  const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/category/star-jalsha", label: "TV Shows" },
-    { href: "/category/bangla-dabbed-movie", label: "Movies" },
-    { href: "/category/zee-bangla", label: "Web Series" },
-  ];
+  const navLinks: { href: string; label: string }[] = [];
 
   const isActive = (href: string) => {
     if (href === "/") return location.pathname === "/";

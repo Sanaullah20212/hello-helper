@@ -769,6 +769,122 @@ serve(async (req) => {
           }
         ]
       };
+
+    } else {
+      // Post page (catch-all for /:slug)
+      const postSlug = path.replace(/^\//, "");
+      
+      if (postSlug && !postSlug.includes("/")) {
+        const { data: post } = await supabase
+          .from("posts")
+          .select("*")
+          .eq("slug", postSlug)
+          .eq("status", "published")
+          .single();
+
+        if (post) {
+          // Get category name
+          let categoryName = "";
+          if (post.category_id) {
+            const { data: category } = await supabase
+              .from("content_categories")
+              .select("name, slug")
+              .eq("id", post.category_id)
+              .single();
+            categoryName = category?.name || "";
+          }
+
+          title = post.meta_title || `${post.title} - ${siteTitle}`;
+          description = post.meta_description || post.excerpt || `${post.title} - Download and watch on ${siteTitle}`;
+          ogImage = post.featured_image_url || ogImage;
+
+          const formattedDate = post.created_at ? new Date(post.created_at).toISOString() : "";
+          const updatedDate = post.updated_at ? new Date(post.updated_at).toISOString() : "";
+
+          // Extract text from content for body (strip HTML for clean text)
+          const contentText = (post.content || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim().substring(0, 500);
+
+          bodyContent = `
+            <nav aria-label="Breadcrumb">
+              <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+                <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                  <a itemprop="item" href="${siteUrl}"><span itemprop="name">Home</span></a>
+                  <meta itemprop="position" content="1" />
+                </li>
+                ${categoryName ? `
+                <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                  <span itemprop="name">${categoryName}</span>
+                  <meta itemprop="position" content="2" />
+                </li>` : ""}
+                <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                  <span itemprop="name">${post.title}</span>
+                  <meta itemprop="position" content="${categoryName ? 3 : 2}" />
+                </li>
+              </ol>
+            </nav>
+            <article itemscope itemtype="https://schema.org/Article">
+              <h1 itemprop="headline">${post.title}</h1>
+              ${post.featured_image_url ? `<img itemprop="image" src="${post.featured_image_url}" alt="${post.title}" />` : ""}
+              ${post.excerpt ? `<p itemprop="description">${post.excerpt}</p>` : ""}
+              <div itemprop="articleBody">
+                <p>${contentText}...</p>
+              </div>
+              <div class="meta">
+                ${formattedDate ? `<time itemprop="datePublished" datetime="${formattedDate}">${new Date(post.created_at).toLocaleDateString("en-US")}</time>` : ""}
+                ${updatedDate ? `<time itemprop="dateModified" datetime="${updatedDate}"></time>` : ""}
+                <span itemprop="author" itemscope itemtype="https://schema.org/Organization">
+                  <meta itemprop="name" content="${siteTitle}" />
+                </span>
+              </div>
+              ${post.tags && post.tags.length > 0 ? `
+              <div class="tags">
+                ${post.tags.map((tag: string) => `<span>${tag}</span>`).join("")}
+              </div>` : ""}
+            </article>
+          `;
+
+          jsonLd = {
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Article",
+                "@id": `${canonicalUrl}#article`,
+                "headline": post.title,
+                "description": post.meta_description || post.excerpt || "",
+                "image": post.featured_image_url || undefined,
+                "datePublished": formattedDate,
+                "dateModified": updatedDate || formattedDate,
+                "author": {
+                  "@type": "Organization",
+                  "name": siteTitle,
+                  "url": siteUrl
+                },
+                "publisher": {
+                  "@type": "Organization",
+                  "name": siteTitle,
+                  "logo": {
+                    "@type": "ImageObject",
+                    "url": `${siteUrl}/logo.png`
+                  }
+                },
+                "mainEntityOfPage": {
+                  "@type": "WebPage",
+                  "@id": canonicalUrl
+                },
+                "keywords": post.tags ? post.tags.join(", ") : undefined
+              },
+              {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  { "@type": "ListItem", "position": 1, "name": "Home", "item": siteUrl },
+                  ...(categoryName ? [{ "@type": "ListItem", "position": 2, "name": categoryName }] : []),
+                  { "@type": "ListItem", "position": categoryName ? 3 : 2, "name": post.title, "item": canonicalUrl }
+                ]
+              }
+            ]
+          };
+        }
+      }
     }
 
     // Generate pre-rendered HTML
