@@ -796,7 +796,10 @@ serve(async (req) => {
 
           title = post.meta_title || `${post.title} - ${siteTitle}`;
           description = post.meta_description || post.excerpt || `${post.title} - Download and watch on ${siteTitle}`;
-          ogImage = post.featured_image_url || ogImage;
+          // Extract image: featured_image_url or first <img> from content
+          const postImageMatch = (post.content || "").match(/<img[^>]+src=["']([^"']+)["']/i);
+          const extractedPostImage = postImageMatch ? postImageMatch[1] : null;
+          ogImage = post.featured_image_url || extractedPostImage || ogImage;
 
           const formattedDate = post.created_at ? new Date(post.created_at).toISOString() : "";
           const updatedDate = post.updated_at ? new Date(post.updated_at).toISOString() : "";
@@ -851,7 +854,7 @@ serve(async (req) => {
                 "@id": `${canonicalUrl}#article`,
                 "headline": post.title,
                 "description": post.meta_description || post.excerpt || "",
-                "image": post.featured_image_url || undefined,
+                "image": ogImage || undefined,
                 "datePublished": formattedDate,
                 "dateModified": updatedDate || formattedDate,
                 "author": {
