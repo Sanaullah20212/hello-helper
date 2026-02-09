@@ -178,6 +178,7 @@ const CategoryPage = () => {
         description={`Watch all ${categoryName} TV serials online in full HD on BTSPRO24. Browse ${shows?.length || ''} popular Bengali TV shows, latest episodes & more from ${categoryName}.`}
         canonical={`https://www.btspro24.com${isSection ? '/category/section' : '/category'}/${slug}`}
         keywords={`${categoryName},${categoryName} serials,${categoryName} shows,bengali tv serial,${categoryName} download,watch ${categoryName} online`}
+        ogImage={!isSection && category ? (category as any).image_url || undefined : undefined}
       />
 
       <Header />

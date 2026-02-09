@@ -85,6 +85,11 @@ serve(async (req) => {
         xml = await generateEpisodesSitemap(supabase, today, page);
         break;
       }
+      case "posts": {
+        const page = parseInt(url.searchParams.get("page") || "1", 10);
+        xml = await generatePostsSitemap(supabase, today, page);
+        break;
+      }
       default:
         xml = await generateSitemapIndex(supabase, today);
     }
@@ -111,13 +116,19 @@ serve(async (req) => {
 
 // Generate Sitemap Index (like Rank Math)
 async function generateSitemapIndex(supabase: SupabaseClientType, today: string): Promise<string> {
-  // Count episodes to determine how many episode sitemaps we need
+  // Count episodes and posts to determine pagination
   const { count: episodeCount } = await supabase
     .from("episodes")
     .select("*", { count: "exact", head: true })
     .eq("is_active", true);
 
-  const episodePages = Math.ceil((episodeCount || 0) / 1000); // 1000 episodes per sitemap
+  const { count: postCount } = await supabase
+    .from("posts")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "published");
+
+  const episodePages = Math.ceil((episodeCount || 0) / 1000);
+  const postPages = Math.ceil((postCount || 0) / 1000);
 
   // Get last modified dates
   const { data: lastShow } = await supabase
@@ -144,9 +155,18 @@ async function generateSitemapIndex(supabase: SupabaseClientType, today: string)
     .limit(1)
     .single();
 
+  const { data: lastPost } = await supabase
+    .from("posts")
+    .select("updated_at")
+    .eq("status", "published")
+    .order("updated_at", { ascending: false })
+    .limit(1)
+    .single();
+
   const showDate = (lastShow as { updated_at: string } | null)?.updated_at || today;
   const episodeDate = (lastEpisode as { updated_at: string } | null)?.updated_at || today;
   const categoryDate = (lastCategory as { updated_at: string } | null)?.updated_at || today;
+  const postDate = (lastPost as { updated_at: string } | null)?.updated_at || today;
 
   let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="${SITE_URL}/sitemap.xsl"?>
@@ -178,6 +198,17 @@ async function generateSitemapIndex(supabase: SupabaseClientType, today: string)
   <sitemap>
     <loc>${SITE_URL}/sitemap-episodes-${i}.xml</loc>
     <lastmod>${episodeDate}</lastmod>
+  </sitemap>
+`;
+  }
+
+  // Add post sitemaps (paginated)
+  for (let i = 1; i <= Math.max(1, postPages); i++) {
+    xml += `
+  <!-- Posts Sitemap ${i} -->
+  <sitemap>
+    <loc>${SITE_URL}/sitemap-posts-${i}.xml</loc>
+    <lastmod>${postDate}</lastmod>
   </sitemap>
 `;
   }
@@ -414,6 +445,76 @@ async function generateEpisodesSitemap(
 </urlset>`;
 
   return xml;
+}
+
+// Generate Posts Sitemap (Paginated - 1000 per page)
+async function generatePostsSitemap(
+  supabase: SupabaseClientType,
+  today: string,
+  page: number
+): Promise<string> {
+  const limit = 1000;
+  const offset = (page - 1) * limit;
+
+  const { data: postData } = await supabase
+    .from("posts")
+    .select("slug, title, featured_image_url, content, created_at, updated_at, tags")
+    .eq("status", "published")
+    .order("updated_at", { ascending: false })
+    .range(offset, offset + limit - 1);
+
+  const posts = (postData || []) as {
+    slug: string;
+    title: string;
+    featured_image_url: string | null;
+    content: string | null;
+    created_at: string;
+    updated_at: string;
+    tags: string[] | null;
+  }[];
+
+  let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+`;
+
+  for (const post of posts) {
+    const lastmod = post.updated_at ? post.updated_at.split('T')[0] : today.split('T')[0];
+    const postUrl = `${SITE_URL}/${post.slug}`;
+
+    // Extract image from featured_image_url or first <img> in content
+    const imageUrl = post.featured_image_url || extractFirstImageFromHtml(post.content);
+
+    xml += `
+  <url>
+    <loc>${postUrl}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>`;
+
+    if (isValidImageUrl(imageUrl)) {
+      xml += `
+    <image:image>
+      <image:loc>${escapeXml(imageUrl!)}</image:loc>
+      <image:title>${escapeXml(post.title)}</image:title>
+    </image:image>`;
+    }
+
+    xml += `
+  </url>`;
+  }
+
+  xml += `
+</urlset>`;
+
+  return xml;
+}
+
+// Helper: Extract first <img> src from HTML
+function extractFirstImageFromHtml(html: string | null): string | null {
+  if (!html) return null;
+  const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
+  return match ? match[1] : null;
 }
 
 // Helper: Escape XML special characters
