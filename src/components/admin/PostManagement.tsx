@@ -58,6 +58,8 @@ const PostManagement = () => {
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [creatingCategory, setCreatingCategory] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -118,6 +120,29 @@ const PostManagement = () => {
       .replace(/\s+/g, "-")
       .replace(/-+/g, "-")
       .trim();
+  };
+
+  const handleCreateCategory = async () => {
+    const name = newCategoryName.trim();
+    if (!name) return;
+    setCreatingCategory(true);
+    try {
+      const slug = generateSlug(name);
+      const { data, error } = await supabase
+        .from("content_categories")
+        .insert({ name, slug })
+        .select("id, name, slug")
+        .single();
+      if (error) throw error;
+      setCategories((prev) => [...prev, data].sort((a, b) => a.name.localeCompare(b.name)));
+      setFormData((prev) => ({ ...prev, category_id: data.id }));
+      setNewCategoryName("");
+      toast.success(`"${name}" ক্যাটাগরি তৈরি হয়েছে`);
+    } catch (error: any) {
+      toast.error(error.message || "ক্যাটাগরি তৈরি করতে ব্যর্থ");
+    } finally {
+      setCreatingCategory(false);
+    }
   };
 
   const handleTitleChange = (title: string) => {
@@ -323,7 +348,7 @@ const PostManagement = () => {
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm">ক্যাটাগরি</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-3">
                 <Select
                   value={formData.category_id || "none"}
                   onValueChange={(v) => setFormData({ ...formData, category_id: v === "none" ? "" : v })}
@@ -340,6 +365,24 @@ const PostManagement = () => {
                     ))}
                   </SelectContent>
                 </Select>
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                    placeholder="নতুন ক্যাটাগরি নাম"
+                    className="h-8 text-xs"
+                    onKeyDown={(e) => e.key === "Enter" && handleCreateCategory()}
+                  />
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-8 shrink-0"
+                    onClick={handleCreateCategory}
+                    disabled={creatingCategory || !newCategoryName.trim()}
+                  >
+                    {creatingCategory ? <Loader2 className="w-3 h-3 animate-spin" /> : <Plus className="w-3 h-3" />}
+                  </Button>
+                </div>
               </CardContent>
             </Card>
 

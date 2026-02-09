@@ -152,6 +152,24 @@ function extractQualitySections(content: string): DownloadSection[] {
   return sections;
 }
 
+/** Check if text is download-related */
+function isDownloadText(text: string): boolean {
+  const lower = text.toLowerCase();
+  const patterns = [
+    /download\s*\d+p/i,
+    /convert/i,
+    /ডাউনলোড/,
+    /লিংক/,
+    /\d{3,4}p/,
+    /quality/i,
+    /speed\s*link/i,
+    /x-?speed/i,
+    /gdrive/i,
+    /terabox/i,
+  ];
+  return patterns.some((p) => p.test(lower));
+}
+
 /** Extract synopsis (text paragraphs without download links/images) */
 function extractSynopsis(content: string): string {
   let clean = content;
@@ -169,7 +187,11 @@ function extractSynopsis(content: string): string {
   let pm;
   while ((pm = pRegex.exec(clean)) !== null) {
     const text = pm[1].replace(/<[^>]*>/g, "").trim();
-    if (text.length > 10 && !/^-?\s*(HD|Low|Medium|High)\s*Quality\s*-?$/i.test(text)) {
+    if (
+      text.length > 10 &&
+      !/^-?\s*(HD|Low|Medium|High)\s*Quality\s*-?$/i.test(text) &&
+      !isDownloadText(text)
+    ) {
       paragraphs.push(`<p>${pm[1]}</p>`);
     }
   }
