@@ -25,7 +25,7 @@ const CategoryBadges = () => {
 
   return (
     <section className="py-4">
-      <div className="max-w-[720px] mx-auto px-3 sm:px-4">
+      <div className="max-w-[1400px] mx-auto px-3 sm:px-6">
         <div className="flex flex-wrap justify-center gap-2">
           {activeCategories.map((category) => (
             <Link
